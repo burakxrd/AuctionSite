@@ -96,7 +96,8 @@ appsettings.json
 keys/
 
 # Ignore all image files within the Auction_Items directory
-AuctionSite/wwwroot/Images/Auction_Items/
+AuctionSite/wwwroot/Images/Auction_Items/*
+!AuctionSite/wwwroot/Images/Auction_Items/.gitkeep
 
 # Ignore specific image file types within the Auction_Items directory
 *.png
