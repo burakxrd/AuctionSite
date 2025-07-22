@@ -33,7 +33,7 @@ Auction Site, ASP.NET Core MVC ile geliştirilmiş, kullanıcıların çevrimiç
 ## **🛠️ Technologies and Libraries Used / 🛠️ Kullanılan Teknolojiler ve Kütüphaneler**
 
 * **Platform:** .NET 8 & ASP.NET Core MVC
-* **Language:** C#
+* **Languages:** C#, HTML, CSS, JavaScript
 * **Database:** Microsoft SQL Server
 * **ORM:** Entity Framework Core
 * **Authentication:** ASP.NET Core Identity with JWT Bearer authentication
@@ -45,7 +45,7 @@ Auction Site, ASP.NET Core MVC ile geliştirilmiş, kullanıcıların çevrimiç
 *---*
 
 * **Platform:** .NET 8 ve ASP.NET Core MVC
-* **Dil:** C#
+* **Diller:** C#, HTML, CSS, JavaScript
 * **Veritabanı:** Microsoft SQL Server
 * **ORM:** Entity Framework Core
 * **Kimlik Doğrulama:** JWT Bearer kimlik doğrulamalı ASP.NET Core Identity
