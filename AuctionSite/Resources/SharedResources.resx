@@ -634,4 +634,10 @@
   <data name="InvalidAuctionId" xml:space="preserve">
     <value>Invalid auction ID.</value>
   </data>
+	<data name="ConcurrencyErrorPlacingBid" xml:space="preserve">
+    <value>Bid conflict. Another user placed a bid simultaneously. Please try again.</value>
+  </data>
+	<data name="UnexpectedErrorPlacingBid" xml:space="preserve">
+    <value>An unexpected error occurred while placing the bid. Please try again.</value>
+  </data>
 </root>

@@ -637,4 +637,10 @@
   <data name="InvalidAuctionId" xml:space="preserve">
     <value>Geçersiz müzayede ID'si.</value>
   </data>
+	<data name="ConcurrencyErrorPlacingBid" xml:space="preserve">
+    <value>Teklif çakışması. Başka bir kullanıcı eş zamanlı teklif verdi. Lütfen tekrar deneyin.</value>
+  </data>
+	<data name="UnexpectedErrorPlacingBid" xml:space="preserve">
+    <value>Teklif verilirken beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.</value>
+  </data>
 </root>

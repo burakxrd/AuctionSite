@@ -397,92 +397,28 @@ namespace AuctionSite.Controllers
         public async Task<IActionResult> PlaceBid(int auctionItemId, decimal bidAmount)
         {
             var currentCulture = CultureInfo.CurrentUICulture;
-            var auctionItem = await _context.AuctionItems
-                .Include(a => a.Bids)
-                .Include(a => a.CurrentBidder)
-                .FirstOrDefaultAsync(a => a.Id == auctionItemId);
-
-            if (auctionItem == null)
-            {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("AuctionNotFound", currentCulture) ?? "";
-                return RedirectToAction(nameof(Index));
-            }
-
-            if (auctionItem.StartTime > DateTime.Now)
-            {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("AuctionNotStartedYet", currentCulture) ?? "";
-                return RedirectToAction(nameof(Details), new { id = auctionItemId });
-            }
-
-            if (auctionItem.EndTime <= DateTime.Now)
-            {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("AuctionExpiredCannotBid", currentCulture) ?? "";
-                return RedirectToAction(nameof(Details), new { id = auctionItemId });
-            }
-
-            var currentUserId = _userManager.GetUserId(User);
-            var currentUser = await _userManager.GetUserAsync(User);
+            var currentUserId = _userManager.GetUserId(User); 
+            var currentUser = await _userManager.GetUserAsync(User); 
 
             if (currentUser == null || currentUserId == null)
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("LoginRequiredToBid", currentCulture) ?? "";
+                TempData["ErrorMessage"] = _sharedLocalizer["LoginRequiredToBid"].Value;
                 return RedirectToAction("Login", "Account");
             }
 
-            if (auctionItem.SellerId == currentUserId)
+            var (success, errorMessage) = await _auctionService.PlaceBidAsync(
+                auctionItemId, bidAmount, currentUser, currentUserId); 
+
+            if (success)
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("CannotBidOnOwnAuction", currentCulture) ?? "";
+                TempData["SuccessMessage"] = _sharedLocalizer["BidPlacedSuccessfully"].Value;
                 return RedirectToAction(nameof(Details), new { id = auctionItemId });
             }
-
-            if (bidAmount <= auctionItem.CurrentBid)
+            else
             {
-                TempData["ErrorMessage"] = string.Format(SharedResources.ResourceManager.GetString("BidMustBeHigherThanCurrentPrice", currentCulture) ?? "", auctionItem.CurrentBid.ToString("C"));
+                TempData["ErrorMessage"] = errorMessage;
                 return RedirectToAction(nameof(Details), new { id = auctionItemId });
             }
-
-            if (bidAmount < auctionItem.CurrentBid + auctionItem.MinimumBidIncrement)
-            {
-                TempData["ErrorMessage"] = string.Format(SharedResources.ResourceManager.GetString("BidMustMeetMinimumIncrement", currentCulture) ?? "", auctionItem.MinimumBidIncrement.ToString("C"));
-                return RedirectToAction(nameof(Details), new { id = auctionItemId });
-            }
-
-            if (currentUser.VirtualBalance < bidAmount)
-            {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("InsufficientBalance", currentCulture) ?? "";
-                return RedirectToAction(nameof(Details), new { id = auctionItemId });
-            }
-
-            if (auctionItem.CurrentBidderId != null)
-            {
-                var previousBidder = await _userManager.FindByIdAsync(auctionItem.CurrentBidderId);
-                if (previousBidder != null)
-                {
-                    previousBidder.VirtualBalance += auctionItem.CurrentBid;
-                    await _userManager.UpdateAsync(previousBidder);
-                }
-            }
-
-            currentUser.VirtualBalance -= bidAmount;
-            await _userManager.UpdateAsync(currentUser);
-
-            var bid = new Bid
-            {
-                AuctionItemId = auctionItemId,
-                BidderId = currentUserId,
-                Amount = bidAmount,
-                BidTime = DateTime.Now
-            };
-
-            _context.Bids.Add(bid);
-            auctionItem.CurrentBid = bidAmount;
-            auctionItem.CurrentBidderId = currentUserId;
-            auctionItem.LastBidTime = DateTime.Now;
-
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("BidPlacedSuccessfully", currentCulture) ?? "";
-            return RedirectToAction(nameof(Details), new { id = auctionItemId });
         }
 
         /// <summary>

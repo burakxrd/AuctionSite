@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization; 
 using SixLabors.ImageSharp;
 using System.Globalization;
+using Microsoft.Extensions.Logging;
 
 
 namespace AuctionSite.Services
@@ -17,17 +18,21 @@ namespace AuctionSite.Services
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IStringLocalizer<SharedResources> _localizer;
         private readonly string[] _allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp" };
+        private readonly ILogger<AuctionService> _logger; 
+
 
         public AuctionService(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             IWebHostEnvironment webHostEnvironment,
-            IStringLocalizer<SharedResources> localizer)
+            IStringLocalizer<SharedResources> localizer,
+            ILogger<AuctionService> logger)
         {
             _context = context;
             _userManager = userManager;
             _webHostEnvironment = webHostEnvironment;
             _localizer = localizer;
+            _logger = logger;
         }
 
         /// <summary>
@@ -361,5 +366,107 @@ namespace AuctionSite.Services
 
             return (true, string.Empty);
         }
+
+
+        /// <summary>
+        /// Places a bid on an auction item, handling all validations and financial transactions.
+        /// </summary>
+        public async Task<(bool success, string errorMessage)> PlaceBidAsync(int auctionItemId, decimal bidAmount, ApplicationUser currentUser, string currentUserId)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var auctionItem = await _context.AuctionItems
+                                                .Include(a => a.Bids)
+                                                .Include(a => a.CurrentBidder)
+                                                .FirstOrDefaultAsync(a => a.Id == auctionItemId);
+
+                if (auctionItem == null)
+                {
+                    return (false, _localizer["AuctionNotFound"].Value);
+                }
+
+                if (auctionItem.StartTime > DateTime.Now)
+                {
+                    return (false, _localizer["AuctionNotStartedYet"].Value);
+                }
+
+                if (auctionItem.EndTime <= DateTime.Now)
+                {
+                    return (false, _localizer["AuctionExpiredCannotBid"].Value);
+                }
+
+                if (auctionItem.SellerId == currentUserId)
+                {
+                    return (false, _localizer["CannotBidOnOwnAuction"].Value);
+                }
+
+                if (bidAmount <= auctionItem.CurrentBid)
+                {
+                    return (false, string.Format(_localizer["BidMustBeHigherThanCurrentPrice"].Value, auctionItem.CurrentBid.ToString("C")));
+                }
+
+                if (bidAmount < auctionItem.CurrentBid + auctionItem.MinimumBidIncrement)
+                {
+                    return (false, string.Format(_localizer["BidMustMeetMinimumIncrement"].Value, auctionItem.MinimumBidIncrement.ToString("C")));
+                }
+
+                if (currentUser.VirtualBalance < bidAmount)
+                {
+                    return (false, _localizer["InsufficientBalance"].Value);
+                }
+
+                if (auctionItem.CurrentBidderId != null)
+                {
+                    var previousBidder = await _userManager.FindByIdAsync(auctionItem.CurrentBidderId);
+                    if (previousBidder != null)
+                    {
+                        previousBidder.VirtualBalance += auctionItem.CurrentBid;
+                        var updateResult = await _userManager.UpdateAsync(previousBidder);
+                        if (!updateResult.Succeeded) throw new Exception("Previous bidder balance update failed.");
+                    }
+                }
+
+                currentUser.VirtualBalance -= bidAmount;
+                var currentUserUpdateResult = await _userManager.UpdateAsync(currentUser);
+                if (!currentUserUpdateResult.Succeeded) throw new Exception("Current user balance update failed.");
+
+                var bid = new Bid
+                {
+                    AuctionItemId = auctionItemId,
+                    BidderId = currentUserId,
+                    Amount = bidAmount,
+                    BidTime = DateTime.Now
+                };
+
+                _context.Bids.Add(bid);
+
+                auctionItem.CurrentBid = bidAmount;
+                auctionItem.CurrentBidderId = currentUserId;
+                auctionItem.LastBidTime = DateTime.Now;
+                _context.Update(auctionItem);
+
+                await _context.SaveChangesAsync(); 
+
+                await transaction.CommitAsync();
+
+                return (true, string.Empty); 
+            }
+            catch (DbUpdateConcurrencyException ex) 
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Concurrency error placing bid for auction {AuctionItemId} by user {UserId}", auctionItemId, currentUserId); 
+                return (false, _localizer["ConcurrencyErrorPlacingBid"].Value);
+            }
+            catch (Exception ex) 
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Unexpected error placing bid for auction {AuctionItemId} by user {UserId}", auctionItemId, currentUserId);
+                return (false, _localizer["UnexpectedErrorPlacingBid"].Value);
+            }
+        }
+        ///
+        ///
+        /// <summary>
     }
 }

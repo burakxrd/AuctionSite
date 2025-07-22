@@ -439,6 +439,15 @@ namespace AuctionSite.Resources {
         }
         
         /// <summary>
+        ///   Bid conflict. Another user placed a bid simultaneously. Please try again. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string ConcurrencyErrorPlacingBid {
+            get {
+                return ResourceManager.GetString("ConcurrencyErrorPlacingBid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Confirmed benzeri yerelleştirilmiş bir dize arar.
         /// </summary>
         public static string Confirmed {
@@ -1596,6 +1605,15 @@ namespace AuctionSite.Resources {
         public static string UnauthorizedEditAttempt {
             get {
                 return ResourceManager.GetString("UnauthorizedEditAttempt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An unexpected error occurred while placing the bid. Please try again. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string UnexpectedErrorPlacingBid {
+            get {
+                return ResourceManager.GetString("UnexpectedErrorPlacingBid", resourceCulture);
             }
         }
         

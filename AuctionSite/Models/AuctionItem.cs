@@ -13,6 +13,8 @@ namespace AuctionSite.Models
         }
 
         public int Id { get; set; }
+        public byte[]? RowVersion { get; set; }
+
 
         [Required(ErrorMessageResourceName = nameof(SharedResources.ProductNameRequired), ErrorMessageResourceType = typeof(SharedResources))]
         [StringLength(100, ErrorMessageResourceName = nameof(SharedResources.AuctionItem_NameLength), ErrorMessageResourceType = typeof(SharedResources))]
