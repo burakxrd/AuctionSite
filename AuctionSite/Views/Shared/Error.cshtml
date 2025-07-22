@@ -1,0 +1,40 @@
+﻿@model ErrorViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var errorTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Error", currentCulture) ?? "";
+    var anErrorOccurredMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AnErrorOccurred", currentCulture) ?? "";
+    var requestIDLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("RequestID", currentCulture) ?? "";
+    var developmentModeTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DevelopmentMode", currentCulture) ?? "";
+    var developmentModeExplanation1 = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DevelopmentModeExplanation1", currentCulture) ?? "";
+    var developmentModeWarning1 = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DevelopmentModeWarning1", currentCulture) ?? "";
+    var developmentModeWarning2 = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DevelopmentModeWarning2", currentCulture) ?? "";
+    var developmentModeExplanation2 = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DevelopmentModeExplanation2", currentCulture) ?? "";
+
+    ViewData["Title"] = errorTitle;
+}
+
+<h1 class="text-danger">@errorTitle.</h1>
+<h2 class="text-danger">@anErrorOccurredMessage.</h2>
+
+@if (Model.ShowRequestId)
+{
+    <p>
+        <strong>@requestIDLabel:</strong> <code>@Model.RequestId</code>
+    </p>
+}
+
+<h3>@developmentModeTitle</h3>
+<p>
+    @developmentModeExplanation1
+</p>
+<p>
+    <strong>@developmentModeWarning1</strong>
+    @developmentModeWarning2
+    @developmentModeExplanation2
+</p>

@@ -1,0 +1,218 @@
+﻿@model IEnumerable<AuctionSite.Models.AuctionItem>
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+@inject Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+    var currentUserId = UserManager.GetUserId(User);
+
+    var activeAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ActiveAuctions") ?? "";
+    var upcomingAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("UpcomingAuctions") ?? "";
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice") ?? "";
+    var currentBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentBid") ?? "";
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller") ?? "";
+    var endTimeTextLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EndTimeText") ?? "";
+    var placeBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PlaceBid") ?? "";
+    var auctionExpiredLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionExpired") ?? "";
+    var noActiveAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoActiveAuctions") ?? "";
+    var timeExpiredMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeExpiredMessage") ?? "";
+    var viewDetailsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ViewDetails") ?? "";
+    var timeUntilStartLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeUntilStart") ?? "";
+    var auctionNotStartedYetLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionNotStartedYet") ?? "";
+    var noUpcomingAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoUpcomingAuctions") ?? "";
+    var timeRemainingLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeRemaining") ?? "";
+
+    var daysShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DaysShort") ?? "d ";
+    var hoursShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HoursShort") ?? "h ";
+    var minutesShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("MinutesShort") ?? "m ";
+    var secondsShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("SecondsShort") ?? "s ";
+    var colonSeparator = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ColonSeparator") ?? ":";
+    var space = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Space") ?? " ";
+    var auctionStartedMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionStarted") ?? "";
+
+
+    ViewBag.JsLocalizedStrings = new Dictionary<string, string>
+    {
+        { "daysShort", daysShort },
+        { "hoursShort", hoursShort },
+        { "minutesShort", minutesShort },
+        { "secondsShort", secondsShort },
+        { "colonSeparator", colonSeparator },
+        { "space", space },
+        { "auctionStarted", auctionStartedMessage },
+        { "timeExpiredMessage", timeExpiredMessage },
+        { "timeUntilStart", timeUntilStartLabel },
+        { "timeRemaining", timeRemainingLabel }
+    };
+
+
+    ViewData["Title"] = activeAuctionsTitle;
+
+    var activeAuctions = ViewBag.ActiveAuctions as List<AuctionSite.Models.AuctionItem>;
+    var upcomingAuctions = ViewBag.UpcomingAuctions as List<AuctionSite.Models.AuctionItem>;
+}
+
+<div class="text-center">
+    <h1 class="display-4">@activeAuctionsTitle</h1>
+</div>
+
+<div class="row">
+    @if (activeAuctions != null && activeAuctions.Any())
+    {
+        foreach (var item in activeAuctions)
+        {
+            var isSeller = User.Identity?.IsAuthenticated == true && item.SellerId == currentUserId;
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default_auction_item.png" : item.ImageUrl)" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">
+                            @startingPriceLabel: <strong>@item.StartingPrice.ToString("C2")</strong> <br />
+                            @currentBidLabel: <strong>@item.CurrentBid.ToString("C2")</strong>
+                        </p>
+                        <p class="card-text"><small class="text-muted">@sellerLabel: @item.Seller?.UserName</small></p>
+                        <p class="card-text">@endTimeTextLabel@colonSeparator@space<span class="countdown" data-endtime="@item.EndTime.ToString("o")"></span></p>
+
+                        @if (item.IsActive && item.EndTime > DateTime.UtcNow)
+                        {
+                            @if (isSeller)
+                            {
+                                <a asp-action="Details" asp-controller="AuctionItems" asp-route-id="@item.Id" class="btn btn-primary">@viewDetailsLabel</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Details" asp-controller="AuctionItems" asp-route-id="@item.Id" class="btn btn-primary">@placeBidLabel</a>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@auctionExpiredLabel</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>@noActiveAuctionsMessage</p>
+        </div>
+    }
+</div>
+
+<div class="text-center mt-5">
+    <h1 class="display-4">@upcomingAuctionsTitle</h1>
+</div>
+
+<div class="row">
+    @if (upcomingAuctions != null && upcomingAuctions.Any())
+    {
+        foreach (var item in upcomingAuctions)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default_auction_item.png" : item.ImageUrl)" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">
+                            @startingPriceLabel: <strong>@item.StartingPrice.ToString("C2")</strong>
+                        </p>
+                        <p class="card-text"><small class="text-muted">@sellerLabel: @item.Seller?.UserName</small></p>
+                        <p class="card-text">@timeUntilStartLabel@colonSeparator@space<span class="countdown" data-endtime="@item.EndTime.ToString("o")" data-starttime="@item.StartTime.ToString("o")" data-type="start"></span></p>
+
+                        <span class="badge bg-info">@auctionNotStartedYetLabel</span>
+                        <a asp-action="Details" asp-controller="AuctionItems" asp-route-id="@item.Id" class="btn btn-outline-primary">@viewDetailsLabel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>@noUpcomingAuctionsMessage</p>
+        </div>
+    }
+</div>
+
+<div id="localizedStringsData" data-strings='@Html.Raw(Json.Serialize(ViewBag.JsLocalizedStrings))' style="display:none;"></div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataElement = document.getElementById('localizedStringsData');
+            const localizedStrings = JSON.parse(dataElement.dataset.strings);
+
+            document.querySelectorAll('.countdown').forEach(function(element) {
+                const startTime = new Date(element.dataset.starttime);
+                const endTime = new Date(element.dataset.endtime);
+                const type = element.dataset.type;
+
+                function updateCountdown() {
+                    const now = new Date().getTime();
+                    let distance;
+                    let prefix = "";
+                    let expiredMessage = "";
+
+                    if (type === 'start') {
+                        distance = startTime - now;
+                        prefix = localizedStrings.timeUntilStart + localizedStrings.colonSeparator + localizedStrings.space;
+                        expiredMessage = localizedStrings.auctionStarted;
+                    } else {
+                        distance = endTime - now;
+                        prefix = localizedStrings.timeRemaining + localizedStrings.colonSeparator + localizedStrings.space;
+                        expiredMessage = localizedStrings.timeExpiredMessage;
+                    }
+
+                    if (distance < 0) {
+                        element.innerHTML = expiredMessage;
+                        if (type === 'end') {
+                            const cardBody = element.closest('.card-body');
+                            if (cardBody) {
+                                const placeBidBtn = cardBody.querySelector('.btn-primary');
+                                if (placeBidBtn) {
+                                    placeBidBtn.remove();
+                                    const expiredBadge = document.createElement('span');
+                                    expiredBadge.className = 'badge bg-secondary';
+                                    expiredBadge.textContent = localizedStrings.timeExpiredMessage;
+                                    cardBody.appendChild(expiredBadge);
+                                }
+                            }
+                        }
+                        return;
+                    }
+
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    let timeString = "";
+                    if (days > 0) {
+                        timeString += `${days}${localizedStrings.daysShort}`;
+                    }
+                    if (hours > 0 || (days > 0 && minutes > 0)) {
+                        timeString += `${hours}${localizedStrings.hoursShort}`;
+                    }
+                    if (minutes > 0 || (hours > 0 && seconds > 0)) {
+                        timeString += `${minutes}${localizedStrings.minutesShort}`;
+                    }
+                    if (seconds > 0 || timeString === "") {
+                        timeString += `${seconds}${localizedStrings.secondsShort}`;
+                    }
+                    element.innerHTML = prefix + timeString.trim();
+                }
+
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            });
+        });
+    </script>
+}

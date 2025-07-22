@@ -1,0 +1,64 @@
+﻿@model AuctionSite.Models.LoginViewModel
+@using AuctionSite.Resources
+@using AuctionSite.Models
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var loginTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Login", currentCulture) ?? "";
+    var useLocalAccountToLoginLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("UseALocalAccountToLogin", currentCulture) ?? "";
+    var emailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Email", currentCulture) ?? "";
+    var passwordLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Password", currentCulture) ?? "";
+    var rememberMeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("RememberMe", currentCulture) ?? "";
+    var forgotPasswordLink = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ForgotPasswordLink", currentCulture) ?? "";
+    var registerNewUserLink = AuctionSite.Resources.SharedResources.ResourceManager.GetString("RegisterNewUser", currentCulture) ?? "";
+
+    ViewData["Title"] = loginTitle;
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<h1>@loginTitle</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <form id="account" method="post" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl">
+                <h2>@useLocalAccountToLoginLabel</h2>
+                <hr />
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="@emailLabel" />
+                    <label asp-for="Email" class="form-label">@emailLabel</label>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-floating mb-3">
+                    <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="@passwordLabel" />
+                    <label asp-for="Password" class="form-label">@passwordLabel</label>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="checkbox mb-3">
+                    <label asp-for="RememberMe" class="form-label">
+                        <input class="form-check-input" asp-for="RememberMe" />
+                        @rememberMeLabel
+                    </label>
+                </div>
+                <div>
+                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">@loginTitle</button>
+                </div>
+                <p>
+                    <a id="forgot-password" asp-action="ForgotPassword" asp-controller="Account">@forgotPasswordLink</a>
+                </p>
+                <p>
+                    <a asp-area="Identity" asp-page="/Account/Register" asp-route-returnUrl="@returnUrl">@registerNewUserLink</a>
+                </p>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,17 @@
+﻿@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var privacyTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Privacy", currentCulture) ?? "";
+    var privacyPolicyText = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PrivacyPolicyText", currentCulture) ?? "";
+
+    ViewData["Title"] = privacyTitle;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>@privacyPolicyText</p>

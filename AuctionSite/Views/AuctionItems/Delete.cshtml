@@ -1,0 +1,97 @@
+﻿@model AuctionSite.Models.AuctionItem
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var deleteAuctionTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DeleteAuction", currentCulture) ?? "";
+    var areYouSureToDeleteMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AreYouSureToDelete", currentCulture) ?? "";
+    var auctionItemLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionItem", currentCulture) ?? "";
+    var productNameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ProductName", currentCulture) ?? "";
+    var descriptionLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Description", currentCulture) ?? "";
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice", currentCulture) ?? "";
+    var currentBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentBid", currentCulture) ?? "";
+    var endTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EndTime", currentCulture) ?? "";
+    var imageLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Image", currentCulture) ?? "";
+    var noImageAvailableLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoImageAvailable", currentCulture) ?? "";
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller", currentCulture) ?? "";
+    var deleteButtonLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Delete", currentCulture) ?? "";
+    var backToDetailsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BackToDetails", currentCulture) ?? "";
+
+    ViewData["Title"] = deleteAuctionTitle;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3 class="text-danger">@areYouSureToDeleteMessage</h3>
+<div>
+    <h4>@auctionItemLabel</h4>
+    <hr />
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+    <dl class="row">
+        <dt class="col-sm-3">
+            @productNameLabel
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class="col-sm-3">
+            @descriptionLabel
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-3">
+            @startingPriceLabel
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.StartingPrice)
+        </dd>
+        <dt class="col-sm-3">
+            @currentBidLabel
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.CurrentBid)
+        </dd>
+        <dt class="col-sm-3">
+            @endTimeLabel
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.EndTime)
+        </dd>
+        <dt class="col-sm-3">
+            @imageLabel
+        </dt>
+        <dd class="col-sm-9">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" alt="@Model.Name" style="max-width: 200px; height: auto;" />
+            }
+            else
+            {
+                <span>@noImageAvailableLabel</span>
+            }
+        </dd>
+        <dt class="col-sm-3">
+            @sellerLabel
+        </dt>
+        <dd class="col-sm-9">
+            @Model.Seller?.UserName
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="@deleteButtonLabel" class="btn btn-danger" /> |
+        <a asp-action="Details" asp-route-id="@Model.Id">@backToDetailsLabel</a>
+    </form>
+</div>

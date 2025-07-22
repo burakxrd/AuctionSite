@@ -1,0 +1,619 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Bu dosya, uygulamanızın Türkçe dili için yerelleştirme metinlerini içerir.
+    Visual Studio'da .resx dosyasını çift tıklayarak tablo görünümünde düzenleyebilirsiniz.
+  -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:Is="DataSet">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" msdata:Ordinal="1" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Genel Sayfa Metinleri -->
+  <data name="Welcome" xml:space="preserve">
+    <value>Müzayede Sitemize Hoş Geldiniz!</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Ana Sayfa</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Gizlilik</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Hata</value>
+  </data>
+  <data name="AnErrorOccurred" xml:space="preserve">
+    <value>İsteğiniz işlenirken bir hata oluştu.</value>
+  </data>
+  <data name="RequestID" xml:space="preserve">
+    <value>İstek Kimliği</value>
+  </data>
+  <data name="DevelopmentMode" xml:space="preserve">
+    <value>Geliştirme Modu</value>
+  </data>
+  <data name="DevelopmentModeExplanation1" xml:space="preserve">
+    <value>&lt;strong&gt;Geliştirme&lt;/strong&gt; ortamına geçmek, oluşan hata hakkında daha ayrıntılı bilgi gösterecektir.</value>
+  </data>
+  <data name="DevelopmentModeWarning1" xml:space="preserve">
+    <value>&lt;strong&gt;Geliştirme&lt;/strong&gt; ortamı dağıtılan uygulamalar için etkinleştirilmemelidir.</value>
+  </data>
+  <data name="DevelopmentModeWarning2" xml:space="preserve">
+    <value>Bu, istisnalardan hassas bilgilerin son kullanıcılara gösterilmesine neden olabilir.</value>
+  </data>
+  <data name="DevelopmentModeExplanation2" xml:space="preserve">
+    <value>Yerel hata ayıklama için, &lt;strong&gt;ASPNETCORE_ENVIRONMENT&lt;/strong&gt; ortam değişkenini &lt;strong&gt;Development&lt;/strong&gt; olarak ayarlayarak ve uygulamayı yeniden başlatarak &lt;strong&gt;Geliştirme&lt;/strong&gt; ortamını etkinleştirin.</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Merhaba</value>
+  </data>
+  <data name="ManageAccount" xml:space="preserve">
+    <value>Hesabı Yönet</value>
+  </data>
+  <data name="YourBids" xml:space="preserve">
+    <value>Tekliflerim</value>
+  </data>
+  <data name="YourAuctions" xml:space="preserve">
+    <value>Açık Artırmalarım</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Giriş Yap</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Kaydol</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Çıkış Yap</value>
+  </data>
+  <!-- Açık Artırma Ortak Metinleri -->
+  <data name="AuctionItems" xml:space="preserve">
+    <value>Açık Artırma Ürünleri</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Yeni Oluştur</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detaylar</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Düzenle</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Listeye Geri Dön</value>
+  </data>
+  <data name="PlaceBid" xml:space="preserve">
+    <value>Teklif Ver</value>
+  </data>
+  <data name="CurrentBid" xml:space="preserve">
+    <value>Mevcut Teklif</value>
+  </data>
+  <data name="Seller" xml:space="preserve">
+    <value>Satıcı</value>
+  </data>
+  <data name="AuctionDetails" xml:space="preserve">
+    <value>Açık Artırma Detayları</value>
+  </data>
+  <data name="YourBid" xml:space="preserve">
+    <value>Teklifiniz</value>
+  </data>
+  <data name="MinimumNextBid" xml:space="preserve">
+    <value>Minimum Sonraki Teklif</value>
+  </data>
+  <data name="AuctionNotFound" xml:space="preserve">
+    <value>Açık artırma bulunamadı.</value>
+  </data>
+  <data name="AuctionExpired" xml:space="preserve">
+    <value>Bu açık artırmanın süresi dolmuştur.</value>
+  </data>
+  <data name="BidAmountTooLow" xml:space="preserve">
+    <value>Teklif miktarınız en az {0} olmalıdır.</value>
+  </data>
+  <data name="BidPlacedSuccessfully" xml:space="preserve">
+    <value>Teklifiniz başarıyla verildi!</value>
+  </data>
+  <data name="LatestBids" xml:space="preserve">
+    <value>Son Teklifler</value>
+  </data>
+  <data name="NoBidsYet" xml:space="preserve">
+    <value>Henüz teklif verilmedi.</value>
+  </data>
+  <data name="NoImageAvailable" xml:space="preserve">
+    <value>Görsel Yok</value>
+  </data>
+  <data name="LoginToPlaceBid" xml:space="preserve">
+    <value>Teklif vermek için lütfen giriş yapın.</value>
+  </data>
+  <data name="EditAuction" xml:space="preserve">
+    <value>Açık Artırmayı Düzenle</value>
+  </data>
+  <data name="AuctionItem" xml:space="preserve">
+    <value>Açık Artırma Öğesi</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Kaydet</value>
+  </data>
+  <data name="BackToDetails" xml:space="preserve">
+    <value>Detaylara Geri Dön</value>
+  </data>
+  <data name="UnauthorizedEdit" xml:space="preserve">
+    <value>Bu açık artırmayı düzenlemeye yetkiniz yok.</value>
+  </data>
+  <data name="CannotEditActiveOrBiddedAuction" xml:space="preserve">
+    <value>Bu açık artırma aktif olduğu, süresi dolduğu veya teklif aldığı için düzenlenemez.</value>
+  </data>
+  <data name="UploadNewImage" xml:space="preserve">
+    <value>Yeni Görsel Yükle (isteğe bağlı)</value>
+  </data>
+  <data name="DeleteAuction" xml:space="preserve">
+    <value>Açık Artırmayı Sil</value>
+  </data>
+  <data name="AreYouSureToDelete" xml:space="preserve">
+    <value>Bu öğeyi silmek istediğinizden emin misiniz?</value>
+  </data>
+  <data name="CannotDeleteActiveOrBiddedAuction" xml:space="preserve">
+    <value>Bu açık artırma aktif olduğu, süresi dolduğu veya teklif aldığı için silinemez.</value>
+  </data>
+  <data name="AuctionUpdatedSuccessfully" xml:space="preserve">
+    <value>Açık artırma başarıyla güncellendi!</value>
+  </data>
+  <data name="AuctionDeletedSuccessfully" xml:space="preserve">
+    <value>Açık artırma başarıyla silindi!</value>
+  </data>
+  <data name="LoginRequiredToCreateAuction" xml:space="preserve">
+    <value>Açık artırma oluşturmak için giriş yapmalısınız.</value>
+  </data>
+  <data name="UnauthorizedEditAttempt" xml:space="preserve">
+    <value>Bu açık artırmayı düzenlemeye yetkiniz yok.</value>
+  </data>
+  <data name="CannotEditActiveOrExpiredAuction" xml:space="preserve">
+    <value>Bu açık artırma aktif olduğu, süresi dolduğu veya teklif aldığı için düzenlenemez.</value>
+  </data>
+  <data name="UnauthorizedDeleteAttempt" xml:space="preserve">
+    <value>Bu açık artırmayı silmeye yetkiniz yok.</value>
+  </data>
+  <data name="LoginRequiredToBid" xml:space="preserve">
+    <value>Teklif vermek için giriş yapmalısınız.</value>
+  </data>
+  <data name="AuctionExpiredCannotBid" xml:space="preserve">
+    <value>Bu açık artırmanın süresi dolmuştur ve yeni teklif alınamaz.</value>
+  </data>
+  <data name="AuctionNotStartedYet" xml:space="preserve">
+    <value>Bu açık artırma henüz başlamadı.</value>
+  </data>
+  <data name="BidMustBeHigherThanCurrentPrice" xml:space="preserve">
+    <value>Teklifiniz mevcut fiyattan ({0}) yüksek olmalıdır.</value>
+  </data>
+  <data name="BidMustMeetMinimumIncrement" xml:space="preserve">
+    <value>Teklifiniz mevcut fiyattan en az {0} kadar yüksek olmalıdır.</value>
+  </data>
+  <data name="InsufficientBalance" xml:space="preserve">
+    <value>Teklif vermek için sanal bakiyeniz yetersiz.</value>
+  </data>
+  <data name="AuctionStarted" xml:space="preserve">
+    <value>Açık Artırma Başladı!</value>
+  </data>
+  <data name="TimeUntilStart" xml:space="preserve">
+    <value>Başlamasına Kalan Süre</value>
+  </data>
+  <data name="TimeRemaining" xml:space="preserve">
+    <value>Kalan Süre</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktif</value>
+  </data>
+  <data name="CurrentBidder" xml:space="preserve">
+    <value>Mevcut Teklif Veren</value>
+  </data>
+  <data name="LoginToBid" xml:space="preserve">
+    <value>Teklif vermek için giriş yapın</value>
+  </data>
+  <data name="NoWinner" xml:space="preserve">
+    <value>Bu açık artırmanın kazananı yok.</value>
+  </data>
+  <data name="Winner" xml:space="preserve">
+    <value>Kazanan</value>
+  </data>
+  <data name="Change" xml:space="preserve">
+    <value>Değiştir</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Şifre Değiştir</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Eski Şifre</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Yeni Şifre</value>
+  </data>
+  <data name="ConfirmNewPassword" xml:space="preserve">
+    <value>Yeni Şifreyi Onayla</value>
+  </data>
+  <data name="ChangeEmail" xml:space="preserve">
+    <value>E-posta Değiştir</value>
+  </data>
+  <data name="NewEmail" xml:space="preserve">
+    <value>Yeni E-posta</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>İptal</value>
+  </data>
+  <data name="ResendConfirmationEmail" xml:space="preserve">
+    <value>Onay E-postası Tekrar Gönder</value>
+  </data>
+  <data name="VerifyOldEmail" xml:space="preserve">
+    <value>Eski E-postayı Doğrula</value>
+  </data>
+  <data name="VerificationCode" xml:space="preserve">
+    <value>Doğrulama Kodu</value>
+  </data>
+  <data name="VerifyCode" xml:space="preserve">
+    <value>Kodu Doğrula</value>
+  </data>
+  <data name="CheckNewEmail" xml:space="preserve">
+    <value>Yeni E-postayı Kontrol Et</value>
+  </data>
+  <data name="BackToManageAccount" xml:space="preserve">
+    <value>Hesap Yönetimine Geri Dön</value>
+  </data>
+  <data name="CheckCurrentEmail" xml:space="preserve">
+    <value>Mevcut E-postayı Kontrol Et</value>
+  </data>
+  <data name="ChangeUsername" xml:space="preserve">
+    <value>Kullanıcı Adını Değiştir</value>
+  </data>
+  <data name="NewUsername" xml:space="preserve">
+    <value>Yeni Kullanıcı Adı</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Kullanıcı Adı</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Şifreyi Onayla</value>
+  </data>
+  <data name="LoginRequired" xml:space="preserve">
+    <value>Giriş yapılması gerekiyor.</value>
+  </data>
+  <data name="BidHistory" xml:space="preserve">
+    <value>Teklif Geçmişi</value>
+  </data>
+  <!-- Create Auction Sayfası ve Doğrulama Mesajları -->
+  <data name="ProductName" xml:space="preserve">
+    <value>Ürün Adı</value>
+  </data>
+  <data name="ProductNameRequired" xml:space="preserve">
+    <value>Ürün Adı zorunludur.</value>
+  </data>
+  <data name="AuctionItem_NameLength" xml:space="preserve">
+    <value>{0} en fazla {1} karakter olabilir.</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Açıklama</value>
+  </data>
+  <data name="AuctionItem_DescriptionLength" xml:space="preserve">
+    <value>{0} en fazla {1} karakter olabilir.</value>
+  </data>
+  <data name="StartingPrice" xml:space="preserve">
+    <value>Başlangıç Fiyatı</value>
+  </data>
+  <data name="StartingPriceRequired" xml:space="preserve">
+    <value>Başlangıç fiyatı zorunludur.</value>
+  </data>
+  <data name="StartingPriceRange" xml:space="preserve">
+    <value>Başlangıç fiyatı 0'dan büyük olmalıdır.</value>
+  </data>
+  <data name="MinimumBidIncrement" xml:space="preserve">
+    <value>Minimum Teklif</value>
+  </data>
+  <data name="MinimumBidIncrementRequired" xml:space="preserve">
+    <value>Minimum teklif artırımı zorunludur.</value>
+  </data>
+  <data name="MinimumBidIncrementRange" xml:space="preserve">
+    <value>Minimum teklif artırımı 0'dan büyük olmalıdır.</value>
+  </data>
+  <data name="StartTime" xml:space="preserve">
+    <value>Başlangıç Zamanı</value>
+  </data>
+  <data name="StartTimeRequired" xml:space="preserve">
+    <value>Başlangıç zamanı zorunludur.</value>
+  </data>
+  <data name="EndTime" xml:space="preserve">
+    <value>Bitiş Zamanı</value>
+  </data>
+  <data name="EndTimeRequired" xml:space="preserve">
+    <value>Bitiş zamanı zorunludur.</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Görsel</value>
+  </data>
+  <data name="CreateNewAuction" xml:space="preserve">
+    <value>Yeni Açık Artırma Oluştur</value>
+  </data>
+  <data name="NoActiveAuctions" xml:space="preserve">
+    <value>Şu anda aktif açık artırma bulunmamaktadır.</value>
+  </data>
+  <!-- Zaman Kısaltmaları ve Mesajları -->
+  <data name="TimeExpired" xml:space="preserve">
+    <value>Süre Doldu!</value>
+  </data>
+  <data name="EndTimeText" xml:space="preserve">
+    <value>Bitiş Süresi</value>
+  </data>
+  <data name="DaysShort" xml:space="preserve">
+    <value>g </value>
+  </data>
+  <data name="HoursShort" xml:space="preserve">
+    <value>s </value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>dk </value>
+  </data>
+  <data name="SecondsShort" xml:space="preserve">
+    <value>sn </value>
+  </data>
+  <data name="AuctionExpiredMessage" xml:space="preserve">
+    <value>Açık Artırma Sona Erdi</value>
+  </data>
+  <data name="TimeExpiredMessage" xml:space="preserve">
+    <value>Süre Doldu</value>
+  </data>
+  <data name="ColonSeparator" xml:space="preserve">
+    <value>:</value>
+  </data>
+  <data name="Space" xml:space="preserve">
+    <value> </value>
+  </data>
+  <!-- Home Sayfası için Yeni Anahtarlar -->
+  <data name="UpcomingAuctions" xml:space="preserve">
+    <value>Yaklaşan Açık Artırmalar</value>
+  </data>
+  <data name="NoUpcomingAuctions" xml:space="preserve">
+    <value>Şu anda yaklaşan açık artırma bulunmamaktadır.</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>Detayları Görüntüle</value>
+  </data>
+  <data name="ActiveAuctions" xml:space="preserve">
+    <value>Aktif Açık Artırmalar</value>
+  </data>
+  <data name="MyAuctions" xml:space="preserve">
+    <value>Açık Artırmalarım</value>
+  </data>
+  <data name="StartTimeCannotBeInPast" xml:space="preserve">
+    <value>Başlangıç zamanı geçmiş bir tarih/saat olamaz.</value>
+  </data>
+  <data name="EndTimeMustBeAfterStartTime" xml:space="preserve">
+    <value>Bitiş zamanı başlangıç zamanından sonra olmalıdır.</value>
+  </data>
+  <data name="NoExpiredAuctions" xml:space="preserve">
+    <value>Henüz süresi biten açık artırma bulunmamaktadır.</value>
+  </data>
+  <data name="CannotBidOnOwnAuction" xml:space="preserve">
+    <value>Kendi açık artırmanıza teklif veremezsiniz.</value>
+  </data>
+  <data name="Tip_ProductName" xml:space="preserve">
+    <value>Ürününüzü en iyi anlatan, kısa ve akılda kalıcı bir isim seçin. (Örn: 'Antika Gümüş Cep Saati', 'El Yapımı Seramik Vazo')</value>
+  </data>
+  <data name="Tip_Description" xml:space="preserve">
+    <value>Ürününüzün özelliklerini (boyut, malzeme, durum), varsa kusurlarını ve neden özel olduğunu detaylıca açıklayın. Alıcıları ikna edin! (Minimum 50 kelime önerilir)</value>
+  </data>
+  <data name="Tip_StartingPrice" xml:space="preserve">
+    <value>Açık artırmanızın başlayacağı minimum fiyatı belirleyin. Gerçekçi bir fiyat, daha fazla teklif çekebilir. (Örn: 100.00 TL)</value>
+  </data>
+  <data name="Tip_MinimumBidIncrement" xml:space="preserve">
+    <value>Her yeni teklifin, mevcut teklifin üzerine eklenmesi gereken minimum miktarı belirleyin. Küçük artışlar daha fazla rekabeti teşvik edebilir. (Örn: 5.00 TL)</value>
+  </data>
+  <data name="Tip_StartTime" xml:space="preserve">
+    <value>Açık artırmanızın ne zaman başlayacağını seçin. Gelecekteki bir tarih ve saat olmalıdır. (Örn: '15.07.2025 10:00')</value>
+  </data>
+  <data name="Tip_EndTime" xml:space="preserve">
+    <value>Açık artırmanızın ne zaman sona ereceğini seçin. Başlangıç zamanından sonra olmalıdır. Yeterli süre tanıyarak daha fazla teklif alabilirsiniz. (Örn: '22.07.2025 22:00')</value>
+  </data>
+  <data name="Tip_Image" xml:space="preserve">
+    <value>Ürününüzün yüksek kaliteli, net ve farklı açılardan çekilmiş fotoğraflarını yükleyin. İyi görseller, alıcıların ilgisini çeker ve güven verir. (Maksimum 5MB, JPG/PNG)</value>
+  </data>
+  <data name="PasswordResetConfirmationTitle" xml:space="preserve">
+    <value>Şifre Sıfırlama Onayı</value>
+</data>
+  <data name="PasswordResetConfirmationMessage" xml:space="preserve">
+    <value>Şifrenizi sıfırlamak için e-posta adresinize bir bağlantı gönderilmiştir. Lütfen e-postanızı kontrol edin. Eğer e-posta gelmediyse, spam/gereksiz kutunuzu da kontrol etmeyi unutmayın.</value>
+</data>
+  <data name="UseALocalAccountToLogin" xml:space="preserve">
+    <value>Yerel bir hesap kullanarak giriş yapın.</value>
+</data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Beni Hatırla</value>
+</data>
+  <data name="ForgotPasswordLink" xml:space="preserve">
+    <value>Şifremi unuttum?</value>
+</data>
+  <data name="RegisterNewUser" xml:space="preserve">
+    <value>Yeni kullanıcı kaydol</value>
+</data>
+  <data name="ProfileInformation" xml:space="preserve">
+    <value>Profil Bilgileri</value>
+</data>
+  <data name="Confirmed" xml:space="preserve">
+    <value>Onaylandı</value>
+</data>
+  <data name="NotConfirmed" xml:space="preserve">
+    <value>Onaylanmadı</value>
+</data>
+  <data name="None" xml:space="preserve">
+    <value>Yok</value>
+</data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Telefon Numarası</value>
+</data>
+  <data name="VirtualBalance" xml:space="preserve">
+    <value>Sanal Bakiye</value>
+</data>
+  <data name="Email" xml:space="preserve">
+    <value>E-posta</value>
+</data>
+  <data name="Password" xml:space="preserve">
+    <value>Şifre</value>
+</data>
+  <data name="ResetPasswordTitle" xml:space="preserve">
+    <value>Şifreyi Sıfırla</value>
+</data>
+  <data name="ResetPasswordInstructions" xml:space="preserve">
+    <value>Şifrenizi sıfırlayın.</value>
+</data>
+  <data name="ResetPasswordButton" xml:space="preserve">
+    <value>Şifreyi Sıfırla</value>
+</data>
+  <data name="SetPhoneNumber" xml:space="preserve">
+    <value>Telefon Numarasını Ayarla</value>
+</data>
+  <data name="CurrentPrice" xml:space="preserve">
+    <value>Mevcut Fiyat</value>
+</data>
+  <data name="Status" xml:space="preserve">
+    <value>Durum</value>
+</data>
+  <data name="ImageDeletionErrorMessage" xml:space="preserve">
+    <value>Resim silinirken hata oluştu: {0}</value>
+</data>
+  <data name="SmtpSettingsMissing" xml:space="preserve">
+    <value>SMTP ayarları eksik: Host, Kullanıcı Adı veya Şifre boş.</value>
+</data>
+  <data name="AuctionSiteSupport" xml:space="preserve">
+    <value>Açık Artırma Sitesi Destek</value>
+</data>
+  <data name="EmailSentSuccessfully" xml:space="preserve">
+    <value>E-posta '{0}' adresine '{1}' başarıyla gönderildi.</value>
+</data>
+  <data name="SmtpErrorSendingEmail" xml:space="preserve">
+    <value>E-posta gönderilirken SMTP hatası oluştu: {0} - {1}</value>
+</data>
+  <data name="UnexpectedErrorSendingEmail" xml:space="preserve">
+    <value>E-posta gönderilirken beklenmeyen bir hata oluştu: {0}</value>
+</data>
+  <data name="BidAmountRequired" xml:space="preserve">
+    <value>Teklif miktarı zorunludur.</value>
+</data>
+  <data name="BidAmountRange" xml:space="preserve">
+    <value>Teklif miktarı 0'dan büyük olmalıdır.</value>
+</data>
+  <data name="EmailInvalid" xml:space="preserve">
+    <value>Geçerli bir e-posta adresi girin.</value>
+</data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>E-posta adresi zorunludur.</value>
+</data>
+  <data name="NewEmailRequired" xml:space="preserve">
+    <value>Yeni e-posta adresi zorunludur.</value>
+</data>
+  <data name="NewPasswordMismatch" xml:space="preserve">
+    <value>Yeni şifre ve onay şifresi eşleşmiyor.</value>
+</data>
+  <data name="NewPasswordRequired" xml:space="preserve">
+    <value>Yeni şifre alanı zorunludur.</value>
+</data>
+  <data name="OldPasswordRequired" xml:space="preserve">
+    <value>Mevcut şifre alanı zorunludur.</value>
+</data>
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>Şifre ve onay şifresi eşleşmiyor.</value>
+</data>
+  <data name="PhoneNumberInvalid" xml:space="preserve">
+    <value>Geçerli bir telefon numarası girin.</value>
+</data>
+  <data name="StringLengthValidation" xml:space="preserve">
+    <value>{0} en az {2} ve en fazla {1} karakter uzunluğunda olmalıdır.</value>
+</data>
+  <data name="UsernameRequired" xml:space="preserve">
+    <value>Kullanıcı adı zorunludur.</value>
+</data>
+  <data name="VerificationCodeRequired" xml:space="preserve">
+    <value>Doğrulama kodu zorunludur.</value>
+</data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Şifre zorunludur.</value>
+  </data>
+  <data name="PhoneNumberUpdateSuccess" xml:space="preserve">
+    <value>Telefon numaranız başarıyla güncellendi.</value>
+</data>
+  <data name="AuctionCreatedSuccessfully" xml:space="preserve">
+    <value>Açık artırma başarıyla oluşturuldu!</value>
+</data>
+  <data name="WinningAuctions" xml:space="preserve">
+    <value>Kazanılan Açık Artırmalar</value>
+</data>
+	<data name="LogoutSuccess" xml:space="preserve">
+    <value>Başarıyla çıkış yapıldı.</value>
+  </data>
+	<data name="LoginSuccess" xml:space="preserve">
+    <value>Başarıyla giriş yaptınız.</value>
+  </data>
+	<data name="SuccessfullyRegisteredAndLoggedIn" xml:space="preserve">
+    <value>Başarıyla kaydoldunuz ve giriş yaptınız.</value>
+  </data>
+	<data name="HowItWorksIntro" xml:space="preserve">
+  <value>Sitemizde açık artırmalara katılmak veya kendi ürünlerinizi satmak çok kolay! İşte adım adım rehberimiz:</value>
+</data>
+	<data name="RegisterNowButton" xml:space="preserve">
+  <value>Hemen Kaydol</value>
+</data>
+	<data name="BrowseAuctionsButton" xml:space="preserve">
+  <value>Açık Artırmaları Keşfet</value>
+</data>
+	<data name="HeroBackgroundImageUrl" xml:space="preserve">
+  <value>https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg</value>
+</data>
+</root>

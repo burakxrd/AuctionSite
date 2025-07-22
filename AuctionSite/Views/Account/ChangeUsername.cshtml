@@ -1,0 +1,37 @@
+﻿@model AuctionSite.Models.ChangeUsernameViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var changeUsernameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ChangeUsername", currentCulture) ?? "";
+    var newUsernameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NewUsername", currentCulture) ?? "";
+    var saveLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Save", currentCulture) ?? "";
+    var cancelLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Cancel", currentCulture) ?? "";
+
+    ViewData["Title"] = changeUsernameLabel;
+}
+
+<h1>@changeUsernameLabel</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Account" asp-action="ChangeUsername" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NewUsername">@newUsernameLabel</label>
+                <input asp-for="NewUsername" class="form-control" />
+                <span asp-validation-for="NewUsername" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">@saveLabel</button>
+            <a asp-controller="Account" asp-action="Manage" class="btn btn-secondary mt-3">@cancelLabel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,132 @@
+﻿@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    // Yerelleştirilmiş metinler
+    var homeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Home", currentCulture) ?? "";
+    var createNewAuctionLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CreateNewAuction", currentCulture) ?? "";
+    var auctionItemsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionItems", currentCulture) ?? "";
+    var myAuctionsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("MyAuctions", currentCulture) ?? "";
+    var yourAuctionsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("YourAuctions", currentCulture) ?? "";
+    var yourBidsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("YourBids", currentCulture) ?? "";
+    var winningAuctionsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("WinningAuctions", currentCulture) ?? "";
+    var helloLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Hello", currentCulture) ?? "";
+    var manageAccountLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ManageAccount", currentCulture) ?? ""; // Keep for consistency, though not directly used as link text in new snippet
+    var privacyLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Privacy", currentCulture) ?? "";
+    var logoutLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Logout", currentCulture) ?? "";
+    var registerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Register", currentCulture) ?? "";
+    var loginLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Login", currentCulture) ?? "";
+    var copyrightText = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CopyrightText", currentCulture) ?? "";
+
+
+    ViewData["Title"] = "AuctionSite";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AuctionSite</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AuctionSite.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">AuctionSite</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@homeLabel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="AuctionItems" asp-action="Create">@createNewAuctionLabel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="AuctionItems" asp-action="Index">@auctionItemsLabel</a>
+                        </li>
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle" href="#" id="myAuctionsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    @myAuctionsLabel
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="myAuctionsDropdown">
+                                    <li><a class="dropdown-item" asp-controller="AuctionItems" asp-action="YourAuctions">@yourAuctionsLabel</a></li>
+                                    <li><a class="dropdown-item" asp-controller="AuctionItems" asp-action="YourBids">@yourBidsLabel</a></li>
+                                    <li><a class="dropdown-item" asp-controller="AuctionItems" asp-action="WinningAuctions">@winningAuctionsLabel</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a id="usernameDisplay" class="nav-link text-dark" asp-controller="Account" asp-action="Manage" title="Manage">@helloLabel @(UserManager != null && User != null ? UserManager.GetUserName(User) ?? string.Empty : string.Empty)!</a>
+                            </li>
+                            <li class="nav-item">
+                                <form id="logoutForm" class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
+                                    <button id="logout" type="submit" class="nav-link btn btn-link text-dark">@logoutLabel</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">@registerLabel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">@loginLabel</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - AuctionSite - <a asp-area="" asp-controller="Home" asp-action="Privacy">@privacyLabel</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

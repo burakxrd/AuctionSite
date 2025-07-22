@@ -1,0 +1,205 @@
+﻿@model AuctionSite.Models.AuctionItem
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.AspNetCore.Identity
+@using System.Globalization;
+@inject UserManager<ApplicationUser> UserManager
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var auctionDetailsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionDetails");
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice");
+    var currentPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentPrice");
+    var minimumBidIncrementLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("MinimumBidIncrement");
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller");
+    var startTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartTime");
+    var endTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EndTime");
+    var statusLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Status");
+    var auctionExpiredLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionExpired");
+    var winnerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Winner");
+    var noWinnerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoWinner");
+    var auctionNotStartedYetLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionNotStartedYet");
+    var timeUntilStartLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeUntilStart");
+    var activeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Active");
+    var timeRemainingLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeRemaining");
+    var currentBidderLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentBidder");
+    var placeBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PlaceBid");
+    var loginToBidMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("LoginToBid");
+    var loginLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Login");
+    var editLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Edit");
+    var deleteLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Delete");
+    var bidHistoryLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BidHistory");
+    var noBidsYetLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoBidsYet");
+    var auctionStartedLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionStarted");
+
+
+    ViewData["Title"] = auctionDetailsTitle;
+    var currentUserId = UserManager.GetUserId(User);
+    var isSeller = Model.SellerId == currentUserId;
+    var isUserLoggedIn = User.Identity?.IsAuthenticated == true;
+
+    var modelStartTimeUtc = Model.StartTime.ToString("o");
+    var modelEndTimeUtc = Model.EndTime.ToString("o");
+}
+
+<h1>@auctionDetailsTitle</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="max-height: 400px; object-fit: contain;">
+            <div class="card-body">
+                <h5 class="card-title">@Model.Name</h5>
+                <p class="card-text">@Model.Description</p>
+                <p class="card-text"><strong>@startingPriceLabel:</strong> @Model.StartingPrice.ToString("C")</p>
+                <p class="card-text"><strong>@currentPriceLabel:</strong> @Model.CurrentBid.ToString("C")</p>
+                <p class="card-text"><strong>@minimumBidIncrementLabel:</strong> @Model.MinimumBidIncrement.ToString("C")</p>
+                <p class="card-text"><strong>@sellerLabel:</strong> @Model.Seller?.UserName</p>
+
+                <p class="card-text"><strong>@startTimeLabel:</strong> <span class="utc-time" data-utc-time="@modelStartTimeUtc">Yükleniyor...</span></p>
+                <p class="card-text"><strong>@endTimeLabel:</strong> <span class="utc-time" data-utc-time="@modelEndTimeUtc">Yükleniyor...</span></p>
+
+                <p class="card-text"><strong>@statusLabel:</strong></p>
+                @if (Model.EndTime <= DateTime.UtcNow)
+                {
+                    <p class="card-text">
+                        <span class="badge bg-danger">@auctionExpiredLabel</span>
+                    </p>
+                    @if (Model.Winner != null)
+                    {
+                        <p class="card-text"><strong>@winnerLabel:</strong> @Model.Winner.UserName (@Model.CurrentBid.ToString("C"))</p>
+                    }
+                    else
+                    {
+                        <p class="card-text">@noWinnerLabel</p>
+                    }
+                }
+                else if (Model.StartTime > DateTime.UtcNow)
+                {
+                    <p class="card-text">
+                        <span class="badge bg-warning">@auctionNotStartedYetLabel</span><br />
+                        @timeUntilStartLabel: <span id="time-until-start"></span>
+                    </p>
+                }
+                else
+                {
+                    <p class="card-text">
+                        <span class="badge bg-success">@activeLabel</span><br />
+                        @timeRemainingLabel: <span id="time-remaining"></span>
+                    </p>
+                    @if (Model.CurrentBidder != null)
+                    {
+                        <p class="card-text"><strong>@currentBidderLabel:</strong> @Model.CurrentBidder.UserName</p>
+                    }
+                }
+
+                @if (isUserLoggedIn && !isSeller && Model.EndTime > DateTime.UtcNow && Model.StartTime <= DateTime.UtcNow)
+                {
+                    <form asp-action="PlaceBid" method="post">
+                        <input type="hidden" name="auctionItemId" value="@Model.Id" />
+                        <div class="form-group d-flex">
+                            <input type="number" name="bidAmount" class="form-control me-2"
+                                   value="@(Model.CurrentBid + Model.MinimumBidIncrement)"
+                                   min="@(Model.CurrentBid + Model.MinimumBidIncrement)" step="@Model.MinimumBidIncrement" required />
+                            <button type="submit" class="btn btn-primary">@placeBidLabel</button>
+                        </div>
+                    </form>
+                }
+                else if (!isUserLoggedIn)
+                {
+                    <p class="text-muted">@loginToBidMessage <a asp-controller="Account" asp-action="Login">@loginLabel</a></p>
+                }
+
+                @if (isSeller && Model.EndTime > DateTime.UtcNow && !Model.Bids.Any())
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary">@editLabel</a>
+                    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">@deleteLabel</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h5>@bidHistoryLabel</h5>
+        @if (Model.Bids != null && Model.Bids.Any())
+        {
+            <ul class="list-group">
+                @foreach (var bid in Model.Bids.OrderByDescending(b => b.Amount))
+                {
+                    <li class="list-group-item">
+                        <strong>@bid.Bidder?.UserName:</strong> @bid.Amount.ToString("C") (<span class="utc-time" data-utc-time="@bid.BidTime.ToString("o")">Yükleniyor...</span>)
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <p>@noBidsYetLabel</p>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const timeFormatOptions = {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+        };
+
+        function convertUtcToLocalTime(element) {
+            const utcTimeString = element.getAttribute('data-utc-time');
+            if (utcTimeString) {
+                const utcDate = new Date(utcTimeString);
+                element.textContent = utcDate.toLocaleString(navigator.language, timeFormatOptions);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.utc-time').forEach(convertUtcToLocalTime);
+        });
+
+        function updateCountdown(targetTime, elementId, expiredText, startedText) {
+            var countdownElement = document.getElementById(elementId);
+            if (!countdownElement) return;
+
+            var interval = setInterval(function () {
+                var now = new Date().getTime();
+                var distance = targetTime - now;
+
+                if (distance < 0) {
+                    clearInterval(interval);
+                    countdownElement.innerHTML = expiredText;
+                    if (elementId === 'time-until-start' && targetTime <= now) {
+                        window.location.reload(true);
+                    } else if (elementId === 'time-remaining' && targetTime <= now) {
+                        window.location.reload(true);
+                    }
+                    return;
+                }
+
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                countdownElement.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+            }, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var endTime = new Date("@Model.EndTime.ToString("yyyy-MM-ddTHH:mm:ss")").getTime();
+            var startTime = new Date("@Model.StartTime.ToString("yyyy-MM-ddTHH:mm:ss")").getTime();
+            var now = new Date().getTime();
+
+            var auctionStartedText = "@auctionStartedLabel";
+            var auctionExpiredText = "@auctionExpiredLabel";
+
+            if (now < startTime) {
+                updateCountdown(startTime, 'time-until-start', auctionStartedText);
+            } else if (now >= startTime && now <= endTime) {
+                updateCountdown(endTime, 'time-remaining', auctionExpiredText);
+            }
+        });
+    </script>
+}

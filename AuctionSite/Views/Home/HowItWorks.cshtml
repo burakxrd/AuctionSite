@@ -1,0 +1,64 @@
+﻿@using AuctionSite.Resources
+@using System.Globalization;
+@{
+    ViewData["Title"] = SharedResources.ResourceManager.GetString("HowItWorksTitle") ?? "Nasıl Çalışır?";
+
+    // Yerelleştirme değişkenleri
+    var howItWorksTitle = ViewData["Title"];
+    var howItWorksIntro = SharedResources.ResourceManager.GetString("HowItWorksIntro") ?? "Sitemizde açık artırmalara katılmak veya kendi ürünlerinizi satmak çok kolay! İşte adım adım rehberimiz:";
+    var step1Title = SharedResources.ResourceManager.GetString("Step1Title") ?? "Adım 1: Kayıt Olun";
+    var step1Desc = SharedResources.ResourceManager.GetString("Step1Desc") ?? "Sadece birkaç dakikanızı ayırarak ücretsiz bir hesap oluşturun. Güvenliğinizi ön planda tutarak bilgilerinizi koruyoruz.";
+    var step2Title = SharedResources.ResourceManager.GetString("Step2Title") ?? "Adım 2: Keşfedin veya Listeleyin";
+    var step2Desc = SharedResources.ResourceManager.GetString("Step2Desc") ?? "Binlerce benzersiz ürünü keşfedin ve teklif verin ya da kendi ürünlerinizi kolayca listeleyerek satışa sunun.";
+    var step3Title = SharedResources.ResourceManager.GetString("Step3Title") ?? "Adım 3: Teklif Verin / Kazanın veya Satın";
+    var step3Desc = SharedResources.ResourceManager.GetString("Step3Desc") ?? "Beğendiğiniz ürüne teklif vererek heyecana ortak olun, veya kendi ürünlerinizin en yüksek teklifi almasını izleyin. Kazananlar güvenli ödeme ile ürünlerine sahip olur.";
+    var registerNowButton = SharedResources.ResourceManager.GetString("RegisterNowButton") ?? "Hemen Kaydol";
+    var browseAuctionsButton = SharedResources.ResourceManager.GetString("BrowseAuctionsButton") ?? "Açık Artırmaları Keşfet";
+}
+
+<div class="container my-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">@howItWorksTitle</h1>
+        <p class="lead text-muted">@howItWorksIntro</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 text-center">
+                <div class="card-body p-4">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px; font-size: 2.5rem;">1</div>
+                    <h3 class="card-title text-primary">@step1Title</h3>
+                    <p class="card-text text-muted">@step1Desc</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 text-center">
+                <div class="card-body p-4">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px; font-size: 2.5rem;">2</div>
+                    <h3 class="card-title text-primary">@step2Title</h3>
+                    <p class="card-text text-muted">@step2Desc</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 text-center">
+                <div class="card-body p-4">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-4" style="width: 80px; height: 80px; font-size: 2.5rem;">3</div>
+                    <h3 class="card-title text-primary">@step3Title</h3>
+                    <p class="card-text text-muted">@step3Desc</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="@Url.Action("Register", "Account")" class="btn btn-success btn-lg me-3">@registerNowButton</a>
+        <a href="@Url.Action("Search", "AuctionItems")" class="btn btn-outline-primary btn-lg">@browseAuctionsButton</a>
+    </div>
+</div>
+
+@section Scripts {
+        {{-- Bu sayfada canlı geri sayım veya dinamik zaman gösterimi olmadığı için Scripts bölümü boş kalabilir,
+            ancak gelecekte eklenecek bir JavaScript kodu için burası kullanılabilir. --}}
+}

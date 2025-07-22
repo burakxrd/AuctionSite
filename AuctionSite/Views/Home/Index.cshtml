@@ -1,0 +1,371 @@
+﻿@model IEnumerable<AuctionSite.Models.AuctionItem>
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+    var currentUserId = UserManager.GetUserId(User);
+
+    var homePageTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HomePageTitle") ?? "";
+    var activeAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ActiveAuctions") ?? "";
+    var upcomingAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("UpcomingAuctions") ?? "";
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice") ?? "";
+    var currentBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentBid") ?? "";
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller") ?? "";
+    var timeRemainingLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeRemaining") ?? "";
+    var placeBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PlaceBid") ?? "";
+    var auctionExpiredLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionExpired") ?? "";
+    var noActiveAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoActiveAuctions") ?? "";
+    var timeUntilStartLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeUntilStart") ?? "";
+    var auctionNotStartedYetLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionNotStartedYet") ?? "";
+    var viewDetailsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ViewDetails") ?? "";
+    var noUpcomingAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoUpcomingAuctions") ?? "";
+
+    var daysShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DaysShort") ?? "d ";
+    var hoursShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HoursShort") ?? "h ";
+    var minutesShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("MinutesShort") ?? "m ";
+    var secondsShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("SecondsShort") ?? "s ";
+    var colonSeparator = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ColonSeparator") ?? ":";
+    var space = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Space") ?? " ";
+    var auctionStartedMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionStarted") ?? "";
+    var auctionExpiredMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionExpiredMessage") ?? "";
+
+    var heroTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HeroTitle") ?? "Hayallerindeki Ürünü Teklif Et!";
+    var heroSubtitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HeroSubtitle") ?? "Binlerce benzersiz açık artırma ve nadir fırsatlar seni bekliyor.";
+    var discoverAuctionsButton = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DiscoverAuctionsButton") ?? "Açık Artırmaları Keşfet";
+    var sellNowButton = AuctionSite.Resources.SharedResources.ResourceManager.GetString("SellNowButton") ?? "Hemen Satmaya Başla";
+
+    var whyChooseUsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("WhyChooseUsTitle") ?? "Neden Bizi Seçmelisiniz?";
+    var advantage1Title = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Advantage1Title") ?? "Güvenli İşlemler";
+    var advantage1Desc = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Advantage1Desc") ?? "Tüm açık artırmalarımız güvenli ödeme sistemleriyle desteklenmektedir.";
+    var advantage2Title = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Advantage2Title") ?? "Geniş Ürün Yelpazesi";
+    var advantage2Desc = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Advantage2Desc") ?? "Antikadan elektroniğe, her zevke uygun ürünler.";
+    var advantage3Title = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Advantage3Title") ?? "Uzman Desteği";
+    var advantage3Desc = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Advantage3Desc") ?? "Her adımda size yardımcı olacak uzman ekibimiz.";
+
+    var howItWorksTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HowItWorksTitle") ?? "Nasıl Çalışır?";
+    var step1Title = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Step1Title") ?? "Adım 1: Kayıt Olun";
+    var step1Desc = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Step1Desc") ?? "Hızlı ve kolayca üye olun.";
+    var step2Title = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Step2Title") ?? "Adım 2: Teklif Verin veya Ürün Listeleyin";
+    var step2Desc = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Step2Desc") ?? "İstediğiniz ürüne teklif verin ya da kendi ürünlerinizi satışa sunun.";
+    var step3Title = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Step3Title") ?? "Adım 3: Kazanın veya Satın";
+    var step3Desc = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Step3Desc") ?? "Teklifi kazanın veya ürününüzü sorunsuzca satın.";
+    var startNowButton = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartNowButton") ?? "Hemen Başla";
+    var heroBackgroundImageUrl = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HeroBackgroundImageUrl") ?? "";
+
+    var popularCategoriesTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PopularCategoriesTitle") ?? "Popüler Kategoriler";
+    var electronicsCategory = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ElectronicsCategory") ?? "Elektronik";
+    var antiquesCategory = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AntiquesCategory") ?? "Antika";
+    var artCategory = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ArtCategory") ?? "Sanat";
+    var collectiblesCategory = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CollectiblesCategory") ?? "Koleksiyon";
+
+    var testimonialsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TestimonialsTitle") ?? "Müşteri Yorumları";
+    var testimonial1Text = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Testimonial1Text") ?? "Harika bir deneyimdi! İnanılmaz ürünler buldum.";
+    var testimonial1Author = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Testimonial1Author") ?? "Ayşe Yılmaz";
+    var testimonial2Text = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Testimonial2Text") ?? "Ürünlerimi kolayca ve iyi bir fiyata sattım. Tavsiye ederim.";
+    var testimonial2Author = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Testimonial2Author") ?? "Mehmet Demir";
+
+    var footerAboutUsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterAboutUsTitle") ?? "Hakkımızda";
+    var footerAboutUsText = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterAboutUsText") ?? "Açık artırma sitemiz, benzersiz ürünleri keşfetmeniz için güvenli ve dinamik bir platform sunar.";
+    var footerQuickLinksTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterQuickLinksTitle") ?? "Hızlı Bağlantılar";
+    var footerPrivacyPolicy = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterPrivacyPolicy") ?? "Gizlilik Politikası";
+    var footerTermsOfService = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterTermsOfService") ?? "Kullanım Koşulları";
+    var footerContactUs = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterContactUs") ?? "Bize Ulaşın";
+    var footerCopyright = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FooterCopyright") ?? "Tüm Hakları Saklıdır.";
+
+
+    ViewData["Title"] = homePageTitle;
+
+    var activeAuctions = ViewBag.ActiveAuctions as List<AuctionSite.Models.AuctionItem>;
+    var upcomingAuctions = ViewBag.UpcomingAuctions as List<AuctionSite.Models.AuctionItem>;
+}
+
+<section class="jumbotron text-center bg-dark py-5 mb-5 rounded shadow-sm position-relative overflow-hidden"
+         style="background-image: url('@heroBackgroundImageUrl'); background-size: cover; background-position: center; color: white; min-height: 400px;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.6);"></div>
+    <div class="container position-relative z-index-1 d-flex flex-column justify-content-center align-items-center" style="min-height: inherit;">
+        <h1 class="jumbotron-heading display-3 fw-bold animate__animated animate__fadeInDown text-white text-shadow-lg">@heroTitle</h1>
+        <p class="lead mb-4 animate__animated animate__fadeInUp text-white-50">@heroSubtitle</p>
+        <p class="animate__animated animate__fadeInUp animate__delay-1s">
+            <a href="@Url.Action("Search", "AuctionItems")" class="btn btn-primary btn-lg my-2 me-3 shadow-lg">@discoverAuctionsButton</a>
+            <a href="@Url.Action("Create", "AuctionItems")" class="btn btn-outline-light btn-lg my-2 shadow-lg">@sellNowButton</a>
+        </p>
+    </div>
+</section>
+
+<section class="container my-5">
+    <h2 class="text-center mb-4 display-5">@whyChooseUsTitle</h2>
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card p-4 shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <i class="bi bi-shield-lock-fill display-3 text-success mb-3"></i>
+                    <h5 class="card-title">@advantage1Title</h5>
+                    <p class="card-text text-muted">@advantage1Desc</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card p-4 shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <i class="bi bi-boxes display-3 text-primary mb-3"></i>
+                    <h5 class="card-title">@advantage2Title</h5>
+                    <p class="card-text text-muted">@advantage2Desc</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card p-4 shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <i class="bi bi-headset display-3 text-info mb-3"></i>
+                    <h5 class="card-title">@advantage3Title</h5>
+                    <p class="card-text text-muted">@advantage3Desc</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container my-5">
+    <h2 class="text-center mb-5 display-5">@howItWorksTitle</h2>
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card p-4 shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 2rem;">1</div>
+                    <h5 class="card-title">@step1Title</h5>
+                    <p class="card-text text-muted">@step1Desc</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card p-4 shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 2rem;">2</div>
+                    <h5 class="card-title">@step2Title</h5>
+                    <p class="card-text text-muted">@step2Desc</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card p-4 shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; font-size: 2rem;">3</div>
+                    <h5 class="card-title">@step3Title</h5>
+                    <p class="card-text text-muted">@step3Desc</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="@Url.Action("HowItWorks", "Home")" class="btn btn-success btn-lg shadow">@startNowButton</a>
+    </div>
+</section>
+
+<section class="container my-5">
+    <h2 class="text-center mb-4 display-5">@popularCategoriesTitle</h2>
+    <div class="d-flex justify-content-center flex-wrap gap-3">
+        <a href="@Url.Action("Search", "AuctionItems", new { searchQuery = electronicsCategory })" class="btn btn-outline-primary btn-lg rounded-pill shadow-sm">@electronicsCategory</a>
+        <a href="@Url.Action("Search", "AuctionItems", new { searchQuery = antiquesCategory })" class="btn btn-outline-info btn-lg rounded-pill shadow-sm">@antiquesCategory</a>
+        <a href="@Url.Action("Search", "AuctionItems", new { searchQuery = artCategory })" class="btn btn-outline-success btn-lg rounded-pill shadow-sm">@artCategory</a>
+        <a href="@Url.Action("Search", "AuctionItems", new { searchQuery = collectiblesCategory })" class="btn btn-outline-warning btn-lg rounded-pill shadow-sm">@collectiblesCategory</a>
+    </div>
+</section>
+
+<section class="bg-light py-5 my-5">
+    <div class="container">
+        <h2 class="text-center mb-5 display-5">@testimonialsTitle</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-quote display-4 text-secondary opacity-50 mb-3"></i>
+                        <p class="card-text fs-5">" @testimonial1Text "</p>
+                        <footer class="blockquote-footer mt-2">@testimonial1Author</footer>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body text-center">
+                        <i class="bi bi-quote display-4 text-secondary opacity-50 mb-3"></i>
+                        <p class="card-text fs-5">" @testimonial2Text "</p>
+                        <footer class="blockquote-footer mt-2">@testimonial2Author</footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="text-center mt-5">
+    <h1 class="display-4">@activeAuctionsTitle</h1>
+</div>
+
+<div class="row">
+    @if (activeAuctions != null && activeAuctions.Any())
+    {
+        foreach (var item in activeAuctions)
+        {
+            var isSeller = User.Identity?.IsAuthenticated == true && item.SellerId == currentUserId;
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default_auction_item.png" : item.ImageUrl)" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">
+                            @startingPriceLabel: <strong>@item.StartingPrice.ToString("C2")</strong> <br />
+                            @currentBidLabel: <strong>@item.CurrentBid.ToString("C2")</strong>
+                        </p>
+                        <p class="card-text"><small class="text-muted">@sellerLabel: @item.Seller?.UserName</small></p>
+                        <p class="card-text">@timeRemainingLabel@colonSeparator@space<span class="countdown" data-endtime="@item.EndTime.ToString("o")" data-starttime="@item.StartTime.ToString("o")" data-type="end"></span></p>
+
+                        @if (item.IsActive && item.EndTime > DateTime.UtcNow)
+                        {
+                            @if (isSeller)
+                            {
+                                <a asp-action="Details" asp-controller="AuctionItems" asp-route-id="@item.Id" class="btn btn-primary">@viewDetailsLabel</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Details" asp-controller="AuctionItems" asp-route-id="@item.Id" class="btn btn-primary">@placeBidLabel</a>
+                            }
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@auctionExpiredLabel</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>@noActiveAuctionsMessage</p>
+        </div>
+    }
+</div>
+
+<div class="text-center mt-5">
+    <h1 class="display-4">@upcomingAuctionsTitle</h1>
+</div>
+
+<div class="row">
+    @if (upcomingAuctions != null && upcomingAuctions.Any())
+    {
+        foreach (var item in upcomingAuctions)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default_auction_item.png" : item.ImageUrl)" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">
+                            @startingPriceLabel: <strong>@item.StartingPrice.ToString("C2")</strong>
+                        </p>
+                        <p class="card-text"><small class="text-muted">@sellerLabel: @item.Seller?.UserName</small></p>
+                        <p class="card-text">@timeUntilStartLabel@colonSeparator@space<span class="countdown" data-endtime="@item.EndTime.ToString("o")" data-starttime="@item.StartTime.ToString("o")" data-type="start"></span></p>
+
+                        <span class="badge bg-info">@auctionNotStartedYetLabel</span>
+                        <a asp-action="Details" asp-controller="AuctionItems" asp-route-id="@item.Id" class="btn btn-outline-primary">@viewDetailsLabel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>@noUpcomingAuctionsMessage</p>
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    <script>
+        const localizedStrings = {
+            daysShort: "@daysShort",
+            hoursShort: "@hoursShort",
+            minutesShort: "@minutesShort",
+            secondsShort: "@secondsShort",
+            colonSeparator: "@colonSeparator",
+            space: "@space",
+            auctionStarted: "@auctionStartedMessage",
+            timeExpiredMessage: "@auctionExpiredMessage",
+            timeUntilStart: "@timeUntilStartLabel",
+            timeRemaining: "@timeRemainingLabel"
+        };
+
+        document.querySelectorAll('.countdown').forEach(function(element) {
+            const startTime = new Date(element.dataset.starttime);
+            const endTime = new Date(element.dataset.endtime);
+            const type = element.dataset.type;
+
+            function updateCountdown() {
+                const now = new Date().getTime();
+                let distance;
+                let prefix = "";
+                let expiredMessage = "";
+
+                if (type === 'start') {
+                    distance = startTime - now;
+                    prefix = localizedStrings.timeUntilStart + localizedStrings.colonSeparator + localizedStrings.space;
+                    expiredMessage = localizedStrings.auctionStarted;
+                } else {
+                    distance = endTime - now;
+                    prefix = localizedStrings.timeRemaining + localizedStrings.colonSeparator + localizedStrings.space;
+                    expiredMessage = localizedStrings.timeExpiredMessage;
+                }
+
+                if (distance < 0) {
+                    element.innerHTML = expiredMessage;
+                    if (type === 'end') {
+                        const cardBody = element.closest('.card-body');
+                        if (cardBody) {
+                            const placeBidBtn = cardBody.querySelector('.btn-primary');
+                            if (placeBidBtn) {
+                                placeBidBtn.remove();
+                                const expiredBadge = document.createElement('span');
+                                expiredBadge.className = 'badge bg-secondary';
+                                expiredBadge.textContent = "@auctionExpiredLabel";
+                                cardBody.appendChild(expiredBadge);
+                            }
+                        }
+                    }
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                let timeString = "";
+                if (days > 0) {
+                    timeString += `${days}${localizedStrings.daysShort}`;
+                }
+                if (hours > 0 || (days > 0 && minutes > 0)) {
+                    timeString += `${hours}${localizedStrings.hoursShort}`;
+                }
+                if (minutes > 0 || (hours > 0 && seconds > 0)) {
+                    timeString += `${minutes}${localizedStrings.minutesShort}`;
+                }
+                if (seconds > 0 || timeString === "") {
+                    timeString += `${seconds}${localizedStrings.secondsShort}`;
+                }
+                element.innerHTML = prefix + timeString.trim();
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        });
+    </script>
+}

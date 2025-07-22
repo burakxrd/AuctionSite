@@ -1,0 +1,40 @@
+﻿@model AuctionSite.Models.SetPhoneNumberViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var setPhoneNumberTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("SetPhoneNumber", currentCulture) ?? "";
+    var phoneNumberLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PhoneNumber", currentCulture) ?? "";
+    var backToManageAccountLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BackToManageAccount", currentCulture) ?? "";
+
+    ViewData["Title"] = setPhoneNumberTitle;
+}
+
+<h1>@setPhoneNumberTitle</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Account" asp-action="SetPhoneNumber" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="PhoneNumber" class="form-control" autocomplete="tel" aria-required="true" placeholder="@phoneNumberLabel" />
+                <label asp-for="PhoneNumber" class="form-label">@phoneNumberLabel</label>
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@setPhoneNumberTitle</button>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Account" asp-action="Manage">@backToManageAccountLabel</a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

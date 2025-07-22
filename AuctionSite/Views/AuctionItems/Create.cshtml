@@ -1,0 +1,234 @@
+﻿@model AuctionSite.Models.AuctionItem
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+@inject Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json
+@inject IViewLocalizer Localizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    // Sayfa başlığı
+    ViewData["Title"] = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CreateNewAuction", currentCulture) ?? "";
+
+    // Input etiketleri ve buton metinleri için yerelleştirilmiş değerler
+    var productNameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ProductName", currentCulture) ?? "";
+    var descriptionLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Description", currentCulture) ?? "";
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice", currentCulture) ?? "";
+    var minimumBidIncrementLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("MinimumBidIncrement", currentCulture) ?? "";
+    var startTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartTime", currentCulture) ?? "";
+    var endTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EndTime", currentCulture) ?? "";
+    var imageLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Image", currentCulture) ?? "";
+    var createNewLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CreateNew", currentCulture) ?? "";
+    var backToListLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BackToList", currentCulture) ?? "";
+
+    // İpucu metinleri için yerelleştirilmiş değerler
+    var tipProductName = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_ProductName", currentCulture) ?? "";
+    var tipDescription = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_Description", currentCulture) ?? "";
+    var tipStartingPrice = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_StartingPrice", currentCulture) ?? "";
+    var tipMinimumBidIncrement = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_MinimumBidIncrement", currentCulture) ?? "";
+    var tipStartTime = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_StartTime", currentCulture) ?? "";
+    var tipEndTime = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_EndTime", currentCulture) ?? "";
+    var tipImage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Tip_Image", currentCulture) ?? "";
+
+    // JavaScript'e aktarılacak ipucu sözlüğü
+    var localizedTipsDictionary = new Dictionary<string, string>
+    {
+        { "Tip_ProductName", tipProductName },
+        { "Tip_Description", tipDescription },
+        { "Tip_StartingPrice", tipStartingPrice },
+        { "Tip_MinimumBidIncrement", tipMinimumBidIncrement },
+        { "Tip_StartTime", tipStartTime },
+        { "Tip_EndTime", tipEndTime },
+        { "Tip_Image", tipImage }
+    };
+}
+
+<h1 class="display-4 text-center">@ViewData["Title"]</h1>
+
+<hr />
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="Name" class="col-md-3 col-form-label text-md-end">@productNameLabel</label>
+                <div class="col-md-9 position-relative">
+                    <input asp-for="Name" class="form-control" data-tip-key="Tip_ProductName" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <div id="tip-Name" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="Description" class="col-md-3 col-form-label text-md-end">@descriptionLabel</label>
+                <div class="col-md-9 position-relative">
+                    <textarea asp-for="Description" class="form-control" rows="4" data-tip-key="Tip_Description"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                    <div id="tip-Description" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="StartingPrice" class="col-md-3 col-form-label text-md-end">@startingPriceLabel</label>
+                <div class="col-md-9 position-relative">
+                    <input asp-for="StartingPrice" class="form-control" type="number" step="0.01" data-tip-key="Tip_StartingPrice" />
+                    <span asp-validation-for="StartingPrice" class="text-danger"></span>
+                    <div id="tip-StartingPrice" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="MinimumBidIncrement" class="col-md-3 col-form-label text-md-end">@minimumBidIncrementLabel</label>
+                <div class="col-md-9 position-relative">
+                    <input asp-for="MinimumBidIncrement" class="form-control" type="number" step="0.01" data-tip-key="Tip_MinimumBidIncrement" />
+                    <span asp-validation-for="MinimumBidIncrement" class="text-danger"></span>
+                    <div id="tip-MinimumBidIncrement" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="StartTime" class="col-md-3 col-form-label text-md-end">@startTimeLabel</label>
+                <div class="col-md-9 position-relative">
+                    <input asp-for="StartTime" class="form-control" type="datetime-local" data-tip-key="Tip_StartTime" />
+                    <span asp-validation-for="StartTime" class="text-danger"></span>
+                    <div id="tip-StartTime" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="EndTime" class="col-md-3 col-form-label text-md-end">@endTimeLabel</label>
+                <div class="col-md-9 position-relative">
+                    <input asp-for="EndTime" class="form-control" type="datetime-local" data-tip-key="Tip_EndTime" />
+                    <span asp-validation-for="EndTime" class="text-danger"></span>
+                    <div id="tip-EndTime" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label asp-for="ImageUrl" class="col-md-3 col-form-label text-md-end">@imageLabel</label>
+                <div class="col-md-9 position-relative">
+                    <input type="file" name="imageFile" class="form-control" accept="image/*" data-tip-key="Tip_Image" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                    <div id="tip-ImageUrl" class="tip-bubble" style="display: none;">
+                        <small class="form-text text-muted"></small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row mt-4">
+                <div class="col-md-9 offset-md-3">
+                    <input type="submit" value="@createNewLabel" class="btn btn-primary" />
+                    <a asp-action="Index" class="btn btn-secondary">@backToListLabel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="localizedTipsData" data-tips='@Html.Raw(Json.Serialize(localizedTipsDictionary))' style="display:none;"></div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <style>
+        .tip-bubble {
+            position: absolute;
+            left: calc(100% + 15px);
+            top: 0;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: #495057;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            z-index: 1000;
+            min-width: 250px;
+            max-width: 350px;
+            white-space: normal;
+        }
+
+            .tip-bubble::before {
+                content: "";
+                position: absolute;
+                right: 100%;
+                top: 15px;
+                border-width: 8px;
+                border-style: solid;
+                border-color: transparent #dee2e6 transparent transparent;
+            }
+
+            .tip-bubble::after {
+                content: "";
+                position: absolute;
+                right: calc(100% - 1px);
+                top: 15px;
+                border-width: 7px;
+                border-style: solid;
+                border-color: transparent #f8f9fa transparent transparent;
+            }
+
+        @@media (max-width: 767.98px) {
+            .tip-bubble {
+                position: relative;
+                left: 0 !important;
+                top: auto;
+                margin-top: 10px;
+                width: 100%;
+                max-width: none;
+            }
+
+                .tip-bubble::before,
+                .tip-bubble::after {
+                    display: none;
+                }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataElement = document.getElementById('localizedTipsData');
+            const tipTexts = JSON.parse(dataElement.dataset.tips);
+
+            document.querySelectorAll('input[data-tip-key], textarea[data-tip-key]').forEach(inputElement => {
+                const tipKey = inputElement.dataset.tipKey;
+                const inputId = inputElement.id || inputElement.name;
+                const tipBubbleId = `tip-${inputId}`;
+                const tipBubble = document.getElementById(tipBubbleId);
+
+                if (tipBubble) {
+                    const tipTextElement = tipBubble.querySelector('small');
+                    if (tipTextElement) {
+                        tipTextElement.innerHTML = tipTexts[tipKey] || '';
+                    }
+
+                    inputElement.addEventListener('focus', () => {
+                        tipBubble.style.display = 'block';
+                    });
+
+                    inputElement.addEventListener('blur', () => {
+                        tipBubble.style.display = 'none';
+                    });
+                }
+            });
+        });
+    </script>
+}

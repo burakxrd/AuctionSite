@@ -1,0 +1,31 @@
+﻿@model AuctionSite.Models.ChangeEmailViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var checkNewEmailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CheckNewEmail", currentCulture) ?? "";
+    var emailChangeConfirmationInstructions = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EmailChangeConfirmationInstructions", currentCulture) ?? "";
+    var backToManageAccountLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BackToManageAccount", currentCulture) ?? "";
+
+    ViewData["Title"] = checkNewEmailLabel;
+}
+
+<h1>@checkNewEmailLabel</h1>
+
+<div class="alert alert-success">
+    <p>@TempData["SuccessMessage"]</p>
+    <p>@emailChangeConfirmationInstructions</p>
+</div>
+
+<p>
+    <a asp-controller="Account" asp-action="Manage" class="btn btn-primary">@backToManageAccountLabel</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

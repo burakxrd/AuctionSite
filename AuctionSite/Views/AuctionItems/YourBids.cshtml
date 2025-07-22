@@ -1,0 +1,108 @@
+﻿@model IEnumerable<AuctionSite.Models.Bid>
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var yourBidsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("YourBids");
+    var productNameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ProductName");
+    var yourBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("YourBid");
+    var currentBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentBid");
+    var bidTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BidTime");
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller");
+    var endTimeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EndTime");
+    var statusLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Status");
+    var auctionExpiredLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionExpired");
+    var auctionNotStartedYetLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionNotStartedYet");
+    var activeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Active");
+    var viewDetailsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ViewDetails");
+    var noBidsYetMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoBidsYet");
+    var browseAuctionsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BrowseAuctions");
+
+    ViewData["Title"] = yourBidsTitle;
+}
+
+<h1 class="display-4 text-center">@ViewData["Title"]</h1>
+
+<hr />
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>@productNameLabel</th>
+                    <th>@yourBidLabel</th>
+                    <th>@currentBidLabel</th>
+                    <th>@bidTimeLabel</th>
+                    <th>@sellerLabel</th>
+                    <th>@endTimeLabel</th>
+                    <th>@statusLabel</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var bid in Model)
+                {
+                    <tr>
+                        <td>@bid.AuctionItem?.Name</td>
+                        <td><strong>@bid.Amount.ToString("C2")</strong></td>
+                        <td>@bid.AuctionItem?.CurrentBid.ToString("C2")</td>
+                        <td><span class="utc-time" data-utc-time="@bid.BidTime.ToString("o")">Yükleniyor...</span></td>
+                        <td>@bid.AuctionItem?.Seller?.UserName</td>
+                        <td><span class="utc-time" data-utc-time="@bid.AuctionItem?.EndTime.ToString("o")">Yükleniyor...</span></td>
+                        <td>
+                            @if (bid.AuctionItem?.EndTime <= DateTime.UtcNow)
+                            {
+                                <span class="badge bg-danger">@auctionExpiredLabel</span>
+                            }
+                            else if (bid.AuctionItem?.StartTime > DateTime.UtcNow)
+                            {
+                                <span class="badge bg-info">@auctionNotStartedYetLabel</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">@activeLabel</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-controller="AuctionItems" asp-action="Details" asp-route-id="@bid.AuctionItem?.Id" class="btn btn-sm btn-outline-primary">@viewDetailsLabel</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="col-12 text-center">
+        <p>@noBidsYetMessage</p>
+        <a asp-controller="AuctionItems" asp-action="Index" class="btn btn-primary">@browseAuctionsLabel</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        const timeFormatOptions = {
+            year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+        };
+
+        function convertUtcToLocalTime(element) {
+            const utcTimeString = element.getAttribute('data-utc-time');
+            if (utcTimeString) {
+                const utcDate = new Date(utcTimeString);
+                element.textContent = utcDate.toLocaleString(navigator.language, timeFormatOptions);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.utc-time').forEach(convertUtcToLocalTime);
+        });
+    </script>
+}

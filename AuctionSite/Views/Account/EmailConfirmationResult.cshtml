@@ -1,0 +1,32 @@
+﻿@using AuctionSite.Resources
+@using System.Globalization;
+@inject Microsoft.AspNetCore.Mvc.Localization.IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    // Yerelleştirilmiş başlık ve mesajlar
+    var emailConfirmationResultTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EmailConfirmationResultTitle", currentCulture) ?? "";
+    var goToHomePageLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("GoToHomePage", currentCulture) ?? "";
+    var goToAccountManagementLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("GoToAccountManagement", currentCulture) ?? "";
+
+    ViewData["Title"] = emailConfirmationResultTitle;
+}
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="text-center mt-5">@ViewData["Title"]</h2>
+        <hr />
+        <div class="alert @(ViewBag.IsSuccess ? "alert-success" : "alert-danger") mt-4">
+            <p>@ViewBag.Message</p>
+        </div>
+        <p class="text-center">
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary">@goToHomePageLabel</a>
+            <a asp-controller="Account" asp-action="Manage" class="btn btn-secondary">@goToAccountManagementLabel</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

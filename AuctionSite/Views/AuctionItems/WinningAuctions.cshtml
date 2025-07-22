@@ -1,0 +1,58 @@
+﻿@model IEnumerable<AuctionSite.Models.AuctionItem>
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var winningAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("WinningAuctions") ?? "";
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice") ?? "";
+    var winningBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("WinningBid") ?? "";
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller") ?? "";
+    var timeExpiredMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeExpiredMessage") ?? "";
+    var viewDetailsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ViewDetails") ?? "";
+    var noWinningAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoWinningAuctions") ?? "";
+
+    ViewData["Title"] = winningAuctionsTitle;
+}
+
+<div class="text-center">
+    <h1 class="display-4">@winningAuctionsTitle</h1>
+</div>
+
+<div class="row">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "/images/default_auction_item.png" : item.ImageUrl)" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text">
+                            @startingPriceLabel: <strong>@item.StartingPrice.ToString("C2")</strong> <br />
+                            @winningBidLabel: <strong>@item.CurrentBid.ToString("C2")</strong>
+                        </p>
+                        <p class="card-text"><small class="text-muted">@sellerLabel: @item.Seller?.UserName</small></p>
+                        <p class="card-text">@timeExpiredMessage</p>
+
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">@viewDetailsLabel</a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-12">
+            <p>@noWinningAuctionsMessage</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+
+}

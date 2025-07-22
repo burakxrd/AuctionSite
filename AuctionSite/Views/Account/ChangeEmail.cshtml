@@ -1,0 +1,40 @@
+﻿@model AuctionSite.Models.ChangeEmailViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var changeEmailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ChangeEmail", currentCulture) ?? "";
+    var newEmailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NewEmail", currentCulture) ?? "";
+    var backToManageAccountLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("BackToManageAccount", currentCulture) ?? "";
+
+    ViewData["Title"] = changeEmailLabel;
+}
+
+<h1>@changeEmailLabel</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Account" asp-action="ChangeEmail" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="@newEmailLabel" />
+                <label asp-for="NewEmail" class="form-label">@newEmailLabel</label>
+                <span asp-validation-for="NewEmail" class="text-danger"></span>
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@changeEmailLabel</button>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Account" asp-action="Manage">@backToManageAccountLabel</a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

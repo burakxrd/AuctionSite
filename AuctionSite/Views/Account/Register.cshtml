@@ -1,0 +1,52 @@
+﻿@model AuctionSite.Models.RegisterViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var registerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Register", currentCulture) ?? "";
+    var emailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Email", currentCulture) ?? "";
+    var usernameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Username", currentCulture) ?? "";
+    var passwordLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Password", currentCulture) ?? "";
+    var confirmPasswordLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ConfirmPassword", currentCulture) ?? "";
+
+    ViewData["Title"] = registerLabel;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Account" asp-action="Register" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email">@emailLabel</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Username">@usernameLabel</label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password">@passwordLabel</label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword">@confirmPasswordLabel</label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">@registerLabel</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

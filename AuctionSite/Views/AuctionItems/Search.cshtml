@@ -1,0 +1,191 @@
+﻿@using System.Globalization
+@model List<AuctionSite.Models.AuctionItem>
+
+@{
+    ViewData["Title"] = "Arama Sonuçları";
+    string currentSearchQuery = ViewData["CurrentSearchQuery"] as string ?? string.Empty;
+    var currentSortBy = ViewData["SortBy"] as string;
+    var currentSortOrder = ViewData["SortOrder"] as string;
+    var currentMinPrice = ViewData["MinPrice"] as decimal?;
+    var currentMaxPrice = ViewData["MaxPrice"] as decimal?;
+    var currentStatusFilter = ViewData["StatusFilter"] as string;
+
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var activeAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ActiveAuctions") ?? "";
+    var upcomingAuctionsTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("UpcomingAuctions") ?? "";
+    var startingPriceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("StartingPrice") ?? "";
+    var currentBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("CurrentBid") ?? "";
+    var sellerLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Seller") ?? "";
+    var endTimeTextLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("EndTimeText") ?? "";
+    var placeBidLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PlaceBid") ?? "";
+    var auctionExpiredLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionExpired") ?? "";
+    var noActiveAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoActiveAuctions") ?? "";
+    var timeExpiredMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeExpiredMessage") ?? "";
+    var viewDetailsLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ViewDetails") ?? "";
+    var timeUntilStartLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeUntilStart") ?? "";
+    var auctionNotStartedYetLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionNotStartedYet") ?? "";
+    var noUpcomingAuctionsMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NoUpcomingAuctions") ?? "";
+    var timeRemainingLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("TimeRemaining") ?? "";
+    var daysShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("DaysShort") ?? "d ";
+    var hoursShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("HoursShort") ?? "h ";
+    var minutesShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("MinutesShort") ?? "m ";
+    var secondsShort = AuctionSite.Resources.SharedResources.ResourceManager.GetString("SecondsShort") ?? "s ";
+    var colonSeparator = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ColonSeparator") ?? ":";
+    var space = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Space") ?? " ";
+    var auctionStartedMessage = AuctionSite.Resources.SharedResources.ResourceManager.GetString("AuctionStarted") ?? "";
+    var filterButtonLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FilterButtonLabel") ?? "Filtrele";
+    var filtersTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("FiltersTitle") ?? "Filtreler";
+}
+
+<h1 class="mb-4">Arama Sonuçları</h1>
+
+@if (!string.IsNullOrEmpty(currentSearchQuery))
+{
+    <p class="lead">Aranan Kelime: <strong>@currentSearchQuery</strong></p>
+}
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card p-3 mb-3 shadow-sm">
+                <h5 class="card-title">@filtersTitle</h5>
+                <div class="mb-3">
+                    <label for="statusFilter" class="form-label">Durum:</label>
+                    <select id="statusFilter" class="form-select">
+                        {{-- onchange kaldırıldı --}}
+                        <option value="">Tümü (Aktif & Yaklaşan)</option>
+                        <option value="active" selected="@(currentStatusFilter == "active")">Aktif Müzayedeler</option>
+                        <option value="upcoming" selected="@(currentStatusFilter == "upcoming")">Yakında Başlayacaklar</option>
+                        <option value="expired" selected="@(currentStatusFilter == "expired")">Süresi Dolmuşlar</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="minPrice" class="form-label">Fiyat Aralığı:</label>
+                    <input type="number" id="minPrice" class="form-control mb-1" placeholder="Min Fiyat" value="@(currentMinPrice.HasValue? currentMinPrice.Value.ToString() : "")">
+                    <input type="number" id="maxPrice" class="form-control" placeholder="Max Fiyat" value="@(currentMaxPrice.HasValue? currentMaxPrice.Value.ToString() : "")"> 
+                </div>
+                <button type="button" class="btn btn-primary w-100" onclick="applyFiltersAndSorting()">@filterButtonLabel</button>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="d-flex justify-content-end mb-3">
+                <div class="sort-options">
+                    <label for="sortBy" class="form-label me-2">Sıralama:</label>
+                    <select id="sortBy" class="form-select d-inline-block w-auto" onchange="applyFiltersAndSorting()">
+                        {{-- onchange geri eklendi --}}
+                        <option value="" selected="@(string.IsNullOrEmpty(currentSortBy) || (currentSortBy == "endtime" && string.IsNullOrEmpty(currentSortOrder)))">Varsayılan (Bitiş Zamanı)</option>
+                        <option value="currentbid_asc" selected="@(currentSortBy == "currentbid" && currentSortOrder != "desc")">Fiyat: Ucuzdan Pahalıya</option>
+                        <option value="currentbid_desc" selected="@(currentSortBy == "currentbid" && currentSortOrder == "desc")">Fiyat: Pahalıdan Ucuza</option>
+                        <option value="timeremaining_asc" selected="@(currentSortBy == "timeremaining" && currentSortOrder != "desc")">Kalan Süre: En Azdan En Çoğa</option>
+                        <option value="timeremaining_desc" selected="@(currentSortBy == "timeremaining" && currentSortOrder == "desc")">Kalan Süre: En Çoktan En Aza</option>
+                        <option value="popularity_desc" selected="@(currentSortBy == "popularity" && currentSortOrder == "desc")">Popülerlik: En Çok Tekliften En Aza</option>
+                        <option value="popularity_asc" selected="@(currentSortBy == "popularity" && currentSortOrder != "desc")">Popülerlik: En Az Tekliften En Çoğa</option>
+                    </select>
+                </div>
+            </div>
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow-sm h-100">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name" style="height: 200px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <img src="https://placehold.co/400x200/cccccc/333333?text=Resim+Yok" class="card-img-top" alt="Resim Yok" style="height: 200px; object-fit: cover;">
+                                }
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">@item.Name</h5>
+                                    <p class="card-text text-muted flex-grow-1">
+                                        @(item.Description != null && item.Description.Length > 100 ? item.Description.Substring(0, 97) + "..." : item.Description)
+                                    </p>
+                                    <p class="card-text mt-auto">
+                                        Başlangıç Fiyatı: <strong>@item.StartingPrice.ToString("C")</strong><br />
+                                        Mevcut Teklif: <strong>@(item.CurrentBid > 0 ? item.CurrentBid.ToString("C") : "Teklif Yok")</strong><br />
+                                        Bitiş Zamanı: <strong class="auction-endtime" data-utc-endtime="@item.EndTime.ToString("o")"></strong>
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div class="btn-group">
+                                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Detaylar</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info" role="alert">
+                    Aradığınız kritere uygun müzayede bulunamadı.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function applyFiltersAndSorting() {
+            var selectSortBy = document.getElementById('sortBy');
+            var selectedSortValue = selectSortBy.value;
+
+            var selectStatusFilter = document.getElementById('statusFilter');
+            var selectedStatusValue = selectStatusFilter.value;
+
+            var minPriceInput = document.getElementById('minPrice');
+            var maxPriceInput = document.getElementById('maxPrice');
+
+            var minPrice = minPriceInput.value;
+            var maxPrice = maxPriceInput.value;
+
+            var searchQuery = "@Html.Raw(currentSearchQuery)";
+
+            var url = "@Url.Action("Search", "AuctionItems")";
+            var newUrl = url + "?searchQuery=" + encodeURIComponent(searchQuery);
+
+            if (selectedSortValue) {
+                var parts = selectedSortValue.split('_');
+                var sortBy = parts[0];
+                var sortOrder = parts[1];
+                newUrl += "&sortBy=" + encodeURIComponent(sortBy) + "&sortOrder=" + encodeURIComponent(sortOrder);
+            }
+
+            if (selectedStatusValue) {
+                newUrl += "&statusFilter=" + encodeURIComponent(selectedStatusValue);
+            }
+
+            if (minPrice) {
+                newUrl += "&minPrice=" + encodeURIComponent(minPrice);
+            }
+            if (maxPrice) {
+                newUrl += "&maxPrice=" + encodeURIComponent(maxPrice);
+            }
+
+            window.location.href = newUrl;
+        }
+
+        const timeFormatOptions = {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit',
+        };
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.auction-endtime').forEach(function(element) {
+                const utcTimeString = element.getAttribute('data-utc-endtime');
+                if (utcTimeString) {
+                    const utcDate = new Date(utcTimeString);
+                    element.textContent = utcDate.toLocaleString(navigator.language, timeFormatOptions);
+                }
+            });
+        });
+    </script>
+}

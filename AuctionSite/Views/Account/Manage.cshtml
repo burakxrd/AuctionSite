@@ -1,0 +1,71 @@
+﻿@model AuctionSite.Models.ManageViewModel
+@using AuctionSite.Resources
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using System.Globalization;
+@inject IHtmlLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var currentCulture = CultureInfo.CurrentUICulture;
+
+    var manageAccountTitle = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ManageAccount", currentCulture) ?? "";
+    var profileInformationLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ProfileInformation", currentCulture) ?? "";
+    var usernameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Username", currentCulture) ?? "";
+    var changeUsernameLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ChangeUsername", currentCulture) ?? "";
+    var emailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Email", currentCulture) ?? "";
+    var confirmedLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Confirmed", currentCulture) ?? "";
+    var notConfirmedLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("NotConfirmed", currentCulture) ?? "";
+    var resendConfirmationEmailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ResendConfirmationEmail", currentCulture) ?? "";
+    var phoneNumberLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("PhoneNumber", currentCulture) ?? "";
+    var noneLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("None", currentCulture) ?? "";
+    var changeLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("Change", currentCulture) ?? "";
+    var virtualBalanceLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("VirtualBalance", currentCulture) ?? "";
+    var changePasswordLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ChangePassword", currentCulture) ?? "";
+    var changeEmailLabel = AuctionSite.Resources.SharedResources.ResourceManager.GetString("ChangeEmail", currentCulture) ?? "";
+
+    ViewData["Title"] = manageAccountTitle;
+}
+
+<h1>@manageAccountTitle</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>@profileInformationLabel</h2>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-3">@usernameLabel</dt>
+            <dd class="col-sm-9">
+                @Model.Username
+                <a asp-controller="Account" asp-action="ChangeUsername" class="btn btn-sm btn-outline-secondary ml-2">@changeUsernameLabel</a>
+            </dd>
+            <dt class="col-sm-3">@emailLabel</dt>
+            <dd class="col-sm-9">
+                @Model.Email
+                @(Model.IsEmailConfirmed ? $" ({confirmedLabel})" : $" ({notConfirmedLabel})")
+                @if (!Model.IsEmailConfirmed)
+                {
+                    <form asp-controller="Account" asp-action="ResendEmailConfirmation" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link p-0 m-0 align-baseline">@resendConfirmationEmailLabel</button>
+                    </form>
+                }
+            </dd>
+            <dt class="col-sm-3">@phoneNumberLabel</dt>
+            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.PhoneNumber) ? noneLabel : Model.PhoneNumber) <a asp-controller="Account" asp-action="SetPhoneNumber">@changeLabel</a></dd>
+            <dt class="col-sm-3">@virtualBalanceLabel</dt>
+            <dd class="col-sm-9">@ViewBag.VirtualBalance</dd>
+        </dl>
+        <p>
+            <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-primary">@changePasswordLabel</a>
+            <a asp-controller="Account" asp-action="ChangeEmail" class="btn btn-secondary">@changeEmailLabel</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        if ('@TempData["ReloadManagePage"]' === 'True') {
+            window.location.reload(true);
+        }
+    </script>
+}
