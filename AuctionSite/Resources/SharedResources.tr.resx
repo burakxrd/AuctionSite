@@ -595,25 +595,46 @@
   <data name="WinningAuctions" xml:space="preserve">
     <value>Kazanılan Açık Artırmalar</value>
 </data>
-	<data name="LogoutSuccess" xml:space="preserve">
+  <data name="LogoutSuccess" xml:space="preserve">
     <value>Başarıyla çıkış yapıldı.</value>
   </data>
-	<data name="LoginSuccess" xml:space="preserve">
+  <data name="LoginSuccess" xml:space="preserve">
     <value>Başarıyla giriş yaptınız.</value>
   </data>
-	<data name="SuccessfullyRegisteredAndLoggedIn" xml:space="preserve">
+  <data name="SuccessfullyRegisteredAndLoggedIn" xml:space="preserve">
     <value>Başarıyla kaydoldunuz ve giriş yaptınız.</value>
   </data>
-	<data name="HowItWorksIntro" xml:space="preserve">
+  <data name="HowItWorksIntro" xml:space="preserve">
   <value>Sitemizde açık artırmalara katılmak veya kendi ürünlerinizi satmak çok kolay! İşte adım adım rehberimiz:</value>
 </data>
-	<data name="RegisterNowButton" xml:space="preserve">
+  <data name="RegisterNowButton" xml:space="preserve">
   <value>Hemen Kaydol</value>
 </data>
-	<data name="BrowseAuctionsButton" xml:space="preserve">
+  <data name="BrowseAuctionsButton" xml:space="preserve">
   <value>Açık Artırmaları Keşfet</value>
 </data>
-	<data name="HeroBackgroundImageUrl" xml:space="preserve">
+  <data name="HeroBackgroundImageUrl" xml:space="preserve">
   <value>https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg</value>
 </data>
+  <data name="StartTimeCannotBeMinValue" xml:space="preserve">
+    <value>Başlangıç zamanı geçerli bir tarih olmalıdır.</value>
+  </data>
+  <data name="EndTimeCannotBeMinValue" xml:space="preserve">
+    <value>Bitiş zamanı geçerli bir tarih olmalıdır.</value>
+  </data>
+  <data name="InvalidImageExtension" xml:space="preserve">
+    <value>Yalnızca JPG, JPEG, PNG, GIF veya BMP uzantılı görseller yüklenebilir.</value>
+  </data>
+  <data name="InvalidImageMimeType" xml:space="preserve">
+    <value>Yüklenen dosya geçerli bir görsel değil.</value>
+  </data>
+  <data name="CorruptedImage" xml:space="preserve">
+    <value>Yüklenen görsel dosyası bozuk veya geçerli bir görsel formatında değil.</value>
+  </data>
+  <data name="UnexpectedErrorUploadingImage" xml:space="preserve">
+    <value>Yükleme sırasında beklenmeyen bir hata oluştu.</value>
+  </data>
+  <data name="InvalidAuctionId" xml:space="preserve">
+    <value>Geçersiz müzayede ID'si.</value>
+  </data>
 </root>

@@ -24,7 +24,7 @@ namespace AuctionSite.Services
 
         public async Task SendEmailAsync(string email, string subject, string message)
         {
-            var currentCulture = CultureInfo.CurrentUICulture; // currentCulture tanımlandı
+            var currentCulture = CultureInfo.CurrentUICulture; 
             var smtpHost = _configuration["SmtpSettings:Host"];
             var smtpPort = int.Parse(_configuration["SmtpSettings:Port"] ?? "587");
             var smtpUser = _configuration["SmtpSettings:Username"];

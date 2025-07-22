@@ -592,25 +592,46 @@
   <data name="WinningAuctions" xml:space="preserve">
     <value>Winning Auctions</value>
 </data>
-	<data name="LogoutSuccess" xml:space="preserve">
+  <data name="LogoutSuccess" xml:space="preserve">
     <value>Successfully logged out.</value>
   </data>
-	<data name="LoginSuccess" xml:space="preserve">
+  <data name="LoginSuccess" xml:space="preserve">
     <value>You have successfully logged in.</value>
   </data>
-	<data name="SuccessfullyRegisteredAndLoggedIn" xml:space="preserve">
+  <data name="SuccessfullyRegisteredAndLoggedIn" xml:space="preserve">
     <value>You have successfully registered and logged in.</value>
   </data>
-	<data name="HowItWorksIntro" xml:space="preserve">
+  <data name="HowItWorksIntro" xml:space="preserve">
   <value>Participating in auctions or selling your own products on our site is very easy! Here is our step-by-step guide:</value>
 </data>
-	<data name="RegisterNowButton" xml:space="preserve">
+  <data name="RegisterNowButton" xml:space="preserve">
   <value>Register Now</value>
 </data>
-	<data name="BrowseAuctionsButton" xml:space="preserve">
+  <data name="BrowseAuctionsButton" xml:space="preserve">
   <value>Explore Auctions</value>
 </data>
-	<data name="HeroBackgroundImageUrl" xml:space="preserve">
+  <data name="HeroBackgroundImageUrl" xml:space="preserve">
   <value>https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg</value>
 </data>
+  <data name="StartTimeCannotBeMinValue" xml:space="preserve">
+    <value>Start time must be a valid date.</value>
+  </data>
+  <data name="EndTimeCannotBeMinValue" xml:space="preserve">
+    <value>End time must be a valid date.</value>
+  </data>
+  <data name="InvalidImageExtension" xml:space="preserve">
+    <value>Only JPG, JPEG, PNG, GIF, or BMP image extensions can be uploaded.</value>
+  </data>
+  <data name="InvalidImageMimeType" xml:space="preserve">
+    <value>The uploaded file is not a valid image.</value>
+  </data>
+  <data name="CorruptedImage" xml:space="preserve">
+    <value>The uploaded image file is corrupted or invalid.</value>
+  </data>
+  <data name="UnexpectedErrorUploadingImage" xml:space="preserve">
+    <value>An unexpected error occurred during image upload.</value>
+  </data>
+  <data name="InvalidAuctionId" xml:space="preserve">
+    <value>Invalid auction ID.</value>
+  </data>
 </root>

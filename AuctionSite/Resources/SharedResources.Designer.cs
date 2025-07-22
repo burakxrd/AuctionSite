@@ -466,6 +466,15 @@ namespace AuctionSite.Resources {
         }
         
         /// <summary>
+        ///   The uploaded image file is corrupted or invalid. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string CorruptedImage {
+            get {
+                return ResourceManager.GetString("CorruptedImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Create New benzeri yerelleştirilmiş bir dize arar.
         /// </summary>
         public static string CreateNew {
@@ -664,6 +673,15 @@ namespace AuctionSite.Resources {
         }
         
         /// <summary>
+        ///   End time must be a valid date. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string EndTimeCannotBeMinValue {
+            get {
+                return ResourceManager.GetString("EndTimeCannotBeMinValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   End time must be after the start time. benzeri yerelleştirilmiş bir dize arar.
         /// </summary>
         public static string EndTimeMustBeAfterStartTime {
@@ -777,6 +795,33 @@ namespace AuctionSite.Resources {
         public static string InsufficientBalance {
             get {
                 return ResourceManager.GetString("InsufficientBalance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Invalid auction ID. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string InvalidAuctionId {
+            get {
+                return ResourceManager.GetString("InvalidAuctionId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Only JPG, JPEG, PNG, GIF, or BMP image extensions can be uploaded. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string InvalidImageExtension {
+            get {
+                return ResourceManager.GetString("InvalidImageExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The uploaded file is not a valid image. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string InvalidImageMimeType {
+            get {
+                return ResourceManager.GetString("InvalidImageMimeType", resourceCulture);
             }
         }
         
@@ -1384,6 +1429,15 @@ namespace AuctionSite.Resources {
         }
         
         /// <summary>
+        ///   Start time must be a valid date. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string StartTimeCannotBeMinValue {
+            get {
+                return ResourceManager.GetString("StartTimeCannotBeMinValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Start Time is required. benzeri yerelleştirilmiş bir dize arar.
         /// </summary>
         public static string StartTimeRequired {
@@ -1551,6 +1605,15 @@ namespace AuctionSite.Resources {
         public static string UnexpectedErrorSendingEmail {
             get {
                 return ResourceManager.GetString("UnexpectedErrorSendingEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   An unexpected error occurred during image upload. benzeri yerelleştirilmiş bir dize arar.
+        /// </summary>
+        public static string UnexpectedErrorUploadingImage {
+            get {
+                return ResourceManager.GetString("UnexpectedErrorUploadingImage", resourceCulture);
             }
         }
         

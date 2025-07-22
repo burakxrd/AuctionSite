@@ -61,6 +61,9 @@ builder.Services.AddLogging();
 
 builder.Services.AddRazorPages();
 
+
+builder.Services.AddScoped<AuctionService>(); 
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;

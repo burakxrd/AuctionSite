@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Localization;
 using AuctionSite.Resources;
 using System.Globalization;
-using Microsoft.AspNetCore.Mvc.ModelBinding; 
+using SixLabors.ImageSharp;
+using AuctionSite.Services;
+
 
 namespace AuctionSite.Controllers
 {
@@ -17,18 +19,29 @@ namespace AuctionSite.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IStringLocalizer<SharedResources> _sharedLocalizer;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly AuctionService _auctionService;
+
 
         public AuctionItemsController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             IStringLocalizer<SharedResources> sharedLocalizer,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            AuctionService auctionService)
         {
             _context = context;
             _userManager = userManager;
             _sharedLocalizer = sharedLocalizer;
             _webHostEnvironment = webHostEnvironment;
+            _auctionService = auctionService;
+
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+
 
         public async Task<IActionResult> Index()
         {
@@ -55,76 +68,28 @@ namespace AuctionSite.Controllers
 
             return View();
         }
+
+        /// <summary>
+        /// Searches for auction items based on the specified filters and sorting criteria. (AkA Search Method)
+        /// </summary>
+        /// <remarks>This method retrieves auction items that match the specified search criteria and
+        /// sorting options. The filters and sorting parameters are passed to the underlying auction service for
+        /// processing. The search results are displayed in a view, and the current search parameters are stored in <see
+        /// cref="ViewData"/> for use in the view.</remarks>
+        /// <param name="searchQuery">The text to search for in auction item titles or descriptions. Can be null or empty to include all items.</param>
+        /// <param name="sortBy">The field by which to sort the results, such as "Price" or "DateCreated". Must match a valid sorting field.</param>
+        /// <param name="sortOrder">The order in which to sort the results. Use <see langword="asc"/> for ascending or <see langword="desc"/>
+        /// for descending.</param>
+        /// <param name="minPrice">The minimum price of auction items to include in the results. Can be null to exclude this filter.</param>
+        /// <param name="maxPrice">The maximum price of auction items to include in the results. Can be null to exclude this filter.</param>
+        /// <param name="statusFilter">The status of auction items to include in the results, such as "Active" or "Closed". Can be null to include
+        /// all statuses.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the filtered and sorted list of auction items. The result is
+        /// displayed in a view.</returns>
         public async Task<IActionResult> Search(string searchQuery, string sortBy, string sortOrder, decimal? minPrice, decimal? maxPrice, string statusFilter)
         {
-            IQueryable<AuctionItem> auctionItems = _context.AuctionItems
-                                                    .Include(a => a.Seller)
-                                                    .Include(a => a.Bids);
-
-            if (!string.IsNullOrEmpty(searchQuery))
-            {
-                string lowerCaseSearchQuery = searchQuery.ToLower();
-                string currentLanguageCode = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-                int searchLanguageLcid = 1033; 
-
-                if (currentLanguageCode.Equals("tr", StringComparison.OrdinalIgnoreCase))
-                {
-                    searchLanguageLcid = 1055; 
-                }
-
-                auctionItems = auctionItems.Where(a =>
-                    (a.Name != null && (EF.Functions.Contains(a.Name, $"FORMSOF(INFLECTIONAL, \"{searchQuery}\")", searchLanguageLcid) || a.Name.ToLower().Contains(lowerCaseSearchQuery))) ||
-                    (a.Description != null && (EF.Functions.Contains(a.Description, $"FORMSOF(INFLECTIONAL, \"{searchQuery}\")", searchLanguageLcid) || a.Description.ToLower().Contains(lowerCaseSearchQuery)))
-                );
-            }
-
-            if (minPrice.HasValue)
-            {
-                auctionItems = auctionItems.Where(a => a.CurrentBid >= minPrice.Value);
-            }
-            if (maxPrice.HasValue)
-            {
-                auctionItems = auctionItems.Where(a => a.CurrentBid <= maxPrice.Value);
-            }
-
-            DateTime now = DateTime.UtcNow;
-            switch (statusFilter?.ToLower())
-            {
-                case "active": 
-                    auctionItems = auctionItems.Where(a => a.StartTime <= now && a.EndTime > now);
-                    break;
-                case "upcoming":
-                    auctionItems = auctionItems.Where(a => a.StartTime > now);
-                    break;
-                case "expired":
-                    auctionItems = auctionItems.Where(a => a.EndTime <= now);
-                    break;
-                default: 
-                    auctionItems = auctionItems.Where(a => a.EndTime > now || a.StartTime > now);
-                    break;
-            }
-
-            switch (sortBy?.ToLower())
-            {
-                case "currentbid": 
-                    auctionItems = (sortOrder?.ToLower() == "desc") ?
-                                   auctionItems.OrderByDescending(a => a.CurrentBid) :
-                                   auctionItems.OrderBy(a => a.CurrentBid);
-                    break;
-                case "timeremaining":
-                    auctionItems = (sortOrder?.ToLower() == "desc") ?
-                                   auctionItems.OrderByDescending(a => a.EndTime) :
-                                   auctionItems.OrderBy(a => a.EndTime);
-                    break;
-                case "popularity": 
-                    auctionItems = (sortOrder?.ToLower() == "desc") ?
-                                   auctionItems.OrderByDescending(a => a.Bids.Count) :
-                                   auctionItems.OrderBy(a => a.Bids.Count);
-                    break;
-                default:
-                    auctionItems = auctionItems.OrderBy(a => a.EndTime);
-                    break;
-            }
+            var auctionItems = await _auctionService.GetFilteredAndSortedAuctionsAsync(
+                searchQuery, sortBy, sortOrder, minPrice, maxPrice, statusFilter);
 
             ViewData["CurrentSearchQuery"] = searchQuery;
             ViewData["SortBy"] = sortBy;
@@ -133,8 +98,14 @@ namespace AuctionSite.Controllers
             ViewData["MaxPrice"] = maxPrice;
             ViewData["StatusFilter"] = statusFilter;
 
-            return View(await auctionItems.ToListAsync());
+            return View(auctionItems);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
 
         [HttpGet]
         public async Task<IActionResult> Suggest(string term)
@@ -146,13 +117,18 @@ namespace AuctionSite.Controllers
             var suggestions = await _context.AuctionItems
                                             .Where(a => (a.Name != null && a.Name.ToLower().StartsWith(term.ToLower())))
                                             .Select(a => a.Name)
-                                            .Distinct() 
-                                            .Take(10) 
+                                            .Distinct()
+                                            .Take(10)
                                             .ToListAsync();
 
             return Json(suggestions);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -177,12 +153,23 @@ namespace AuctionSite.Controllers
             return View(auctionItem);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+
         [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="auctionItem"></param>
+        /// <param name="imageFile"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
@@ -197,93 +184,34 @@ namespace AuctionSite.Controllers
                 return Unauthorized();
             }
 
-            auctionItem.SellerId = currentUser.Id;
-
-            if (ModelState.ContainsKey(nameof(AuctionItem.SellerId)))
+            if (!ModelState.IsValid)
             {
-                ModelState.Remove(nameof(AuctionItem.SellerId));
+                if (auctionItem.StartTime.Kind == DateTimeKind.Utc) auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
+                if (auctionItem.EndTime.Kind == DateTimeKind.Utc) auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
+                return View(auctionItem);
             }
 
-            if (auctionItem.StartTime == DateTime.MinValue)
+            var (success, errorMessage, createdItem) = await _auctionService.CreateAuctionItemAsync(auctionItem, imageFile, currentUser);
+
+            if (success)
             {
-                ModelState.AddModelError(nameof(auctionItem.StartTime), SharedResources.ResourceManager.GetString("StartTimeCannotBeMinValue") ?? "Başlangıç zamanı geçerli bir tarih olmalıdır.");
-            }
-            if (auctionItem.EndTime == DateTime.MinValue)
-            {
-                ModelState.AddModelError(nameof(auctionItem.EndTime), SharedResources.ResourceManager.GetString("EndTimeCannotBeMinValue") ?? "Bitiş zamanı geçerli bir tarih olmalıdır.");
-            }
-
-            ModelStateEntry? startTimeEntry;
-            bool hasStartTimeEntry = ModelState.TryGetValue(nameof(auctionItem.StartTime), out startTimeEntry);
-            bool isStartTimeFieldValid = !hasStartTimeEntry || (startTimeEntry != null && !startTimeEntry.Errors.Any());
-
-            ModelStateEntry? endTimeEntry;
-            bool hasEndTimeEntry = ModelState.TryGetValue(nameof(auctionItem.EndTime), out endTimeEntry);
-            bool isEndTimeFieldValid = !hasEndTimeEntry || (endTimeEntry != null && !endTimeEntry.Errors.Any());
-
-            if (isStartTimeFieldValid && isEndTimeFieldValid)
-            {
-                auctionItem.StartTime = auctionItem.StartTime.ToUniversalTime();
-                auctionItem.EndTime = auctionItem.EndTime.ToUniversalTime();
-            }
-
-            if (auctionItem.StartTime < DateTime.UtcNow)
-            {
-                ModelState.AddModelError(nameof(auctionItem.StartTime), SharedResources.ResourceManager.GetString("StartTimeCannotBeInPast") ?? "");
-            }
-
-            if (auctionItem.EndTime <= auctionItem.StartTime)
-            {
-                ModelState.AddModelError(nameof(auctionItem.EndTime), SharedResources.ResourceManager.GetString("EndTimeMustBeAfterStartTime") ?? "");
-            }
-
-            if (imageFile != null && imageFile.Length > 0)
-            {
-                var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "auction_items");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await imageFile.CopyToAsync(fileStream);
-                }
-
-                auctionItem.ImageUrl = $"/images/auction_items/{uniqueFileName}";
+                TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("AuctionCreatedSuccessfully", currentCulture) ?? "";
+                return RedirectToAction(nameof(Index));
             }
             else
             {
-                auctionItem.ImageUrl = "https://placehold.co/600x400/cccccc/333333?text=Resim+Yok";
+                ModelState.AddModelError(string.Empty, errorMessage);
+                if (auctionItem.StartTime.Kind == DateTimeKind.Utc) auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
+                if (auctionItem.EndTime.Kind == DateTimeKind.Utc) auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
+                return View(auctionItem);
             }
-
-            if (ModelState.IsValid)
-            {
-                auctionItem.CurrentBid = auctionItem.StartingPrice;
-                auctionItem.IsActive = true;
-                auctionItem.IsSold = false;
-                auctionItem.WinnerId = null;
-
-                _context.Add(auctionItem);
-                await _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("AuctionCreatedSuccessfully") ?? "";
-
-                return RedirectToAction(nameof(Index));
-            }
-            if (auctionItem.StartTime.Kind == DateTimeKind.Utc)
-            {
-                auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
-            }
-            if (auctionItem.EndTime.Kind == DateTimeKind.Utc)
-            {
-                auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
-            }
-            return View(auctionItem);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [Authorize]
         public async Task<IActionResult> Edit(int? id)
@@ -310,17 +238,26 @@ namespace AuctionSite.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
-            auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
-
             if (auctionItem.EndTime <= DateTime.Now || auctionItem.Bids?.Any() == true)
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("CannotEditActiveOrBiddedAuction") ?? "";
+                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("CannotEditActiveOrBiddedAuction", currentCulture) ?? "";
                 return RedirectToAction(nameof(Details), new { id = auctionItem.Id });
             }
 
+            auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
+            auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
+
             return View(auctionItem);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="auctionItem"></param>
+        /// <param name="imageFile"></param>
+        /// <returns></returns>
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -328,132 +265,43 @@ namespace AuctionSite.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartingPrice,MinimumBidIncrement,StartTime,EndTime")] AuctionItem auctionItem, IFormFile? imageFile)
         {
             var currentCulture = CultureInfo.CurrentUICulture;
-            if (ModelState.ContainsKey(nameof(AuctionItem.SellerId)))
-            {
-                ModelState.Remove(nameof(AuctionItem.SellerId));
-            }
-
-            if (id != auctionItem.Id)
-            {
-                return NotFound();
-            }
-
             var currentUser = await _userManager.GetUserAsync(User);
+
             if (currentUser == null)
             {
                 TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("LoginRequired") ?? "";
                 return Unauthorized();
             }
 
-            var existingAuctionItem = await _context.AuctionItems
-                                                    .Include(a => a.Bids)
-                                                    .AsNoTracking()
-                                                    .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (existingAuctionItem == null)
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                if (auctionItem.StartTime.Kind == DateTimeKind.Utc) auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
+                if (auctionItem.EndTime.Kind == DateTimeKind.Utc) auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
+                return View(auctionItem);
             }
 
-            if (existingAuctionItem.SellerId != currentUser.Id)
+            var (success, errorMessage) = await _auctionService.UpdateAuctionItemAsync(id, auctionItem, imageFile, currentUser!);
+
+            if (success)
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("UnauthorizedEdit") ?? "";
+                TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("AuctionUpdatedSuccessfully", currentCulture) ?? "";
                 return RedirectToAction(nameof(Index));
             }
-
-            if (existingAuctionItem.EndTime.ToLocalTime() <= DateTime.Now || existingAuctionItem.Bids?.Any() == true)
+            else
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("CannotEditActiveOrBiddedAuction") ?? "";
-                return RedirectToAction(nameof(Details), new { id = existingAuctionItem.Id });
+                ModelState.AddModelError(string.Empty, errorMessage);
+                if (auctionItem.StartTime.Kind == DateTimeKind.Utc) auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
+                if (auctionItem.EndTime.Kind == DateTimeKind.Utc) auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
+                return View(auctionItem);
             }
-
-            if (auctionItem.StartTime == DateTime.MinValue)
-            {
-                ModelState.AddModelError(nameof(auctionItem.StartTime), SharedResources.ResourceManager.GetString("StartTimeCannotBeMinValue") ?? "Başlangıç zamanı geçerli bir tarih olmalıdır.");
-            }
-            if (auctionItem.EndTime == DateTime.MinValue)
-            {
-                ModelState.AddModelError(nameof(auctionItem.EndTime), SharedResources.ResourceManager.GetString("EndTimeCannotBeMinValue") ?? "Bitiş zamanı geçerli bir tarih olmalıdır.");
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    if (imageFile != null && imageFile.Length > 0)
-                    {
-                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "auction_items");
-                        if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                        if (!string.IsNullOrEmpty(existingAuctionItem.ImageUrl))
-                        {
-                            var oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, existingAuctionItem.ImageUrl.TrimStart('/'));
-                            if (System.IO.File.Exists(oldFilePath)) System.IO.File.Delete(oldFilePath);
-                        }
-
-                        var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await imageFile.CopyToAsync(fileStream);
-                        }
-                        auctionItem.ImageUrl = $"/images/auction_items/{uniqueFileName}";
-                    }
-                    else
-                    {
-                        auctionItem.ImageUrl = existingAuctionItem.ImageUrl;
-                    }
-
-                    auctionItem.SellerId = existingAuctionItem.SellerId;
-                    auctionItem.CurrentBid = existingAuctionItem.CurrentBid;
-                    auctionItem.IsActive = existingAuctionItem.IsActive;
-                    auctionItem.IsSold = existingAuctionItem.IsSold;
-                    auctionItem.WinnerId = existingAuctionItem.WinnerId;
-                    auctionItem.LastBidTime = existingAuctionItem.LastBidTime;
-
-                    bool hasStartTimeEntry = ModelState.TryGetValue(nameof(auctionItem.StartTime), out ModelStateEntry? startTimeEntry);
-                    bool isStartTimeFieldValid = !hasStartTimeEntry || (startTimeEntry != null && !startTimeEntry.Errors.Any());
-
-                    bool hasEndTimeEntry = ModelState.TryGetValue(nameof(auctionItem.EndTime), out ModelStateEntry? endTimeEntry);
-                    bool isEndTimeFieldValid = !hasEndTimeEntry || (endTimeEntry != null && !endTimeEntry.Errors.Any());
-
-                    if (isStartTimeFieldValid && isEndTimeFieldValid)
-                    {
-                        auctionItem.StartTime = auctionItem.StartTime.ToUniversalTime();
-                        auctionItem.EndTime = auctionItem.EndTime.ToUniversalTime();
-                    }
-                    else
-                    {
-                        return View(auctionItem);
-                    }
-
-                    _context.Update(auctionItem);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("AuctionUpdatedSuccessfully") ?? "";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AuctionItemExists(auctionItem.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            if (auctionItem.StartTime.Kind == DateTimeKind.Utc)
-            {
-                auctionItem.StartTime = auctionItem.StartTime.ToLocalTime();
-            }
-            if (auctionItem.EndTime.Kind == DateTimeKind.Utc)
-            {
-                auctionItem.EndTime = auctionItem.EndTime.ToLocalTime();
-            }
-            return View(auctionItem);
         }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
 
         [Authorize]
@@ -469,17 +317,19 @@ namespace AuctionSite.Controllers
                 .Include(a => a.Seller)
                 .Include(a => a.Bids)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (auctionItem == null)
             {
                 return NotFound();
             }
 
-            var currentUser = _userManager.GetUserId(User);
-            if (auctionItem.SellerId != currentUser)
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser == null || auctionItem.SellerId != currentUser.Id)
             {
                 TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("UnauthorizedDeleteAttempt", currentCulture) ?? "";
                 return RedirectToAction(nameof(Index));
             }
+
 
             if (auctionItem.Bids?.Any() == true || auctionItem.EndTime <= DateTime.Now)
             {
@@ -490,53 +340,57 @@ namespace AuctionSite.Controllers
             return View(auctionItem);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var currentCulture = CultureInfo.CurrentUICulture;
-            var auctionItem = await _context.AuctionItems
-                                            .Include(a => a.Bids)
-                                            .FirstOrDefaultAsync(m => m.Id == id);
+            var currentUser = await _userManager.GetUserAsync(User);
 
-            if (auctionItem == null)
+            if (currentUser == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("LoginRequired") ?? "";
+                return Unauthorized();
             }
 
-            var currentUser = _userManager.GetUserId(User);
-            if (auctionItem.SellerId != currentUser)
+            var (success, errorMessage) = await _auctionService.DeleteAuctionItemAsync(id, currentUser);
+
+            if (success)
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("UnauthorizedDeleteAttempt", currentCulture) ?? "";
+                TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("AuctionDeletedSuccessfully", currentCulture) ?? "";
                 return RedirectToAction(nameof(Index));
             }
-
-            if (auctionItem.Bids?.Any() == true || auctionItem.EndTime <= DateTime.Now)
+            else
             {
-                TempData["ErrorMessage"] = SharedResources.ResourceManager.GetString("CannotDeleteActiveOrBiddedAuction", currentCulture) ?? "";
-                return RedirectToAction(nameof(Details), new { id = auctionItem.Id });
+                TempData["ErrorMessage"] = errorMessage;
+                return RedirectToAction(nameof(Details), new { id = id });
             }
-
-            if (!string.IsNullOrEmpty(auctionItem.ImageUrl))
-            {
-                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, auctionItem.ImageUrl.TrimStart('/'));
-                if (System.IO.File.Exists(filePath))
-                {
-                    System.IO.File.Delete(filePath);
-                }
-            }
-
-            _context.AuctionItems.Remove(auctionItem);
-            await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = SharedResources.ResourceManager.GetString("AuctionDeletedSuccessfully", currentCulture) ?? "";
-            return RedirectToAction(nameof(Index));
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         private bool AuctionItemExists(int id)
         {
             return _context.AuctionItems.Any(e => e.Id == id);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="auctionItemId"></param>
+        /// <param name="bidAmount"></param>
+        /// <returns></returns>
 
         [HttpPost]
         [Authorize]
@@ -631,6 +485,11 @@ namespace AuctionSite.Controllers
             return RedirectToAction(nameof(Details), new { id = auctionItemId });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+
         [Authorize]
         public async Task<IActionResult> WinningAuctions()
         {
@@ -652,6 +511,11 @@ namespace AuctionSite.Controllers
 
             return View(winningAuctions);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
 
         [Authorize]
         public async Task<IActionResult> YourAuctions()
@@ -698,6 +562,11 @@ namespace AuctionSite.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+
         [Authorize]
         public async Task<IActionResult> YourBids()
         {
@@ -720,5 +589,9 @@ namespace AuctionSite.Controllers
 
             return View(userBids);
         }
+        ///
+        ///
+        ///
+
     }
 }
