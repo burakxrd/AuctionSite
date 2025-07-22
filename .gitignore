@@ -94,3 +94,14 @@ Thumbs.db
 AuctionSite/wwwroot/lib/
 appsettings.json
 keys/
+
+# Ignore all image files within the Auction_Items directory
+AuctionSite/wwwroot/Images/Auction_Items/
+
+# Ignore specific image file types within the Auction_Items directory
+*.png
+*.jfif
+*.jpg
+*.jpeg
+*.gif
+*.bmp
